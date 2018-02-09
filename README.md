@@ -1,2 +1,3 @@
-# Lie_to_me
-Lie detection using facial and voice recognition
+# Lie To Me
+
+Lie detection using facial and voice recognition `In Progress`
