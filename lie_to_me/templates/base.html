@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/base.css') }}" >
+
+        {% block stylesheets %}{% endblock %}
+		<title>Lie to Me</title>
+    </head>
+    
+    <body>
+        <div class="navbar-fixed">
+            <nav class="top-nav blue darken-4">
+                <div class="nav-wrapper">
+                    <a href="#" class="brand-logo">Lie To Me</a>
+                    <ul class="right">
+                        <li id="upload"><a href="#">Upload</a></li>
+                        <li id="analysis"><a href="#">Analysis</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+              
+        {% block bodycontent %}{% endblock %}
+        
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+        {% block scripts %}{% endblock %}
+    </body>
+</html>

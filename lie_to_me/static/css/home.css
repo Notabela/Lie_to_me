@@ -1,0 +1,30 @@
+#video_canvas {
+    background-color: #E9E9E9;
+    margin-top: 5px;
+}
+
+#canvas-wrap { 
+    position:relative 
+} 
+
+.overlay_2 { 
+    position:absolute; 
+    top:5px; 
+    left:300px; 
+}
+
+video {
+    visibility: hidden;
+    width: 320px;
+    height: 240px;
+}
+
+.overlay { 
+    position:absolute; 
+    top:220px; 
+    left:280px; 
+}
+
+.overlay p{
+    color: #0d47a1;
+}
