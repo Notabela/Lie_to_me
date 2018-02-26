@@ -1,16 +1,18 @@
 #video_canvas {
     background-color: #E9E9E9;
     margin-top: 5px;
+    margin-left: 15px;
 }
 
 #canvas-wrap { 
-    position:relative 
+    position:relative
+
 } 
 
 .overlay_2 { 
     position:absolute; 
-    top:5px; 
-    left:300px; 
+    top:100px;
+    left:150px;
 }
 
 video {
@@ -27,4 +29,13 @@ video {
 
 .overlay p{
     color: #0d47a1;
+}
+
+#uploading {
+    text-align: center;
+    line-height: 10px;
+}
+
+#progressBarDiv {
+    display: none;
 }

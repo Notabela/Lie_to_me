@@ -4,8 +4,7 @@ var faceMode = affdex.FaceDetectorMode.LARGE_FACES;
 var detector = new affdex.FrameDetector(faceMode)
 
 // Affectiva timer timestamp
-var startTimestamp; 
-var myChart;
+var startTimestamp;
 var timeBetweenDrawings = 2000  //20ms
 
 function draw(v,c,w,h) 
@@ -127,18 +126,6 @@ detector.addEventListener("onImageResultsSuccess", (faces, image, timestamp) => 
     let expressions = faces[0].expressions
 
     // only focus on emotions
-    var emotions_labels = []
-    var emotion_vals = []
-    Object.entries(emotions).forEach(
-      ([key, value]) => {
-        if (value < 0 ) value = 0; 
-        emotions_labels.push(key);
-        emotion_vals.push(value);
-    });
-
-    myChart.data.labels = emotions_labels
-    myChart.data.datasets[0].data = emotion_vals
-    myChart.update();
   }
 
 });
@@ -174,52 +161,6 @@ detector.detectAllExpressions();
 detector.detectAllEmotions();
 detector.detectAllEmojis();
 detector.detectAllAppearance();
-
-// CONFIGURE CHART JS
-var ctx = document.getElementById("myChart").getContext('2d');
-myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: [],
-        datasets: [{
-            label: 'Emotion Values',
-            data: [],
-            backgroundColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)',
-                'rgba(110, 102, 255, 1)',
-                'rgba(255,10,132,1)',
-                'rgba(154, 162, 235, 1)'
-            ],
-            borderColor: [
-              'rgba(255,99,132,0.2)',
-              'rgba(54, 162, 235, 0.2)',
-              'rgba(255, 206, 86, 0.2)',
-              'rgba(75, 192, 192, 0.2)',
-              'rgba(153, 102, 255, 0.2)',
-              'rgba(255, 159, 64, 0.2)',
-              'rgba(110, 102, 255, 0.2)',
-              'rgba(255,10,132,0.2)',
-              'rgba(154, 162, 235, 0.2)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
-    }
-});
-
 
 // ON PAGE LOAD
 $( () => {

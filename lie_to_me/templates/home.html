@@ -19,44 +19,42 @@
         </div>
     </div>
 
-    <div class="col s5">
-        <canvas id="myChart" width="400" height="400"></canvas>
-    </div>
 </div>
 
 <div class="row">
-    <div class="col s7">
+    <div id="uploadFormDiv" class="col s6">
+        <form id="videoForm" method=post enctype=multipart/form-data>
         <div class="file-field input-field">
             <div class="btn disabled">
                 <span>Upload</span>
-                <input id="fileItem" type="file" accept="video/mp4">
+                <input id="fileItem" type="file" name="file" accept="video/mp4">
             </div>
             <div class="file-path-wrapper">
                 <input disabled class="file-path validate" type="text">
             </div>
         </div>
+        </form>
     </div>
 
-    <div class="results col s3 offset-s2">
-        <button class="btn-large waves-effect waves-light disabled">Analyze<i class="material-icons right">sync</i></button>
+    <div id="progressBarDiv" class="col s6">
+        <div class="progress">
+            <div class="determinate" style="width: 0%"></div>
+        </div>
+        <p id="uploading">UPLOADING: <span id="uploadValue">0%</span></p>
+    </div>
+
+    <div class="results col s3 offset-s3">
+        <button class="btn-large waves-effect waves-light" onclick="beginAnalysis()">Analyze<i class="material-icons right">sync</i></button>
     </div>
 </div>
 
-<div class="row">
-    <div class="col s2 offset-s2">
-        <button id="start_button" class="btn waves-effect waves-light disabled" onclick="startEmotionDetection()">Start<i class="material-icons right">arrow_forward</i></button>
-    </div>
-    <div class="col s2">
-        <button id="stop_button" class="btn waves-effect waves-light red disabled" onclick="stopEmotionDetection()">Stop<i class="material-icons right">stop</i></button> 
-    </div>
-</div>
 
 {% endblock %}
 
 
 {% block scripts %}
     <script src="https://download.affectiva.com/js/3.2/affdex.js" ></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>
     <script src= {{ url_for('static', filename='js/affectiva.js')}} ></script>
+    <script src= {{ url_for('static', filename='js/analyze.js')}} ></script>
 {% endblock %}
