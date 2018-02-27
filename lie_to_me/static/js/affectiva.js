@@ -7,6 +7,9 @@ var detector = new affdex.FrameDetector(faceMode)
 var startTimestamp;
 var timeBetweenDrawings = 2000  //20ms
 
+// socketIO
+var socket = io.connect('http://' + document.domain + ':' + location.port)
+
 function draw(v,c,w,h) 
 {
   if(v.paused || v.ended) return false;
@@ -166,6 +169,16 @@ detector.detectAllAppearance();
 $( () => {
   detector.start();
   $(".file-path").val("");
+
+  socket.on('connect', () => {
+    // we emit a connected message to let the client know that we are connected
+    socket.emit('connection_active', {data: 'Connected'});
+  })
+
+  socket.on('connect_ack', () => {
+    console.log('Server acknowledged connection')
+  })
+
 
 });
 
