@@ -166,5 +166,6 @@ detector.detectAllAppearance();
 $( () => {
   detector.start();
   $(".file-path").val("");
+
 });
 
