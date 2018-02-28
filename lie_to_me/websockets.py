@@ -1,23 +1,30 @@
 
 from flask_socketio import emit
+from flask import request
 from lie_to_me import socketio
 
+clients = []
+
 # An active connection exists between client and server
-@socketio.on('connection_active')
-def handle_client_connect_event(json):
-    emit('connect_ack', {'data': 'Server ack connection'})
-    print('Connection Active: {0}'.format(str(json)))
+@socketio.on('connect')
+def handle_connect():
+    print('Client connected')
+    clients.append(request.sid)
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print('Client disconnected')
+    clients.remove(request.sid)
 
 # Server received a message from Client
 @socketio.on('message')
 def handle_message_receival(json):
     print('Received: {0}'.format(str(json)))
 
-# Client disconnected from Server
-@socketio.on('disconnect')
-def handle_disconnect(json = None):
-    print('Client Disconnected: {0}'.format(str(json)))
-
+# Affective Client ready to receive photos
+@socketio.on('ready_receive')
+def handle_ready_receive(json):
+    print('Client Ready to Recieve: {0}'.format(str(json)))
 
 # auto implemented backends are 'connect', 'disconnect', 'message' and 'json'
 # to send data -> use send to send a standard Message (under the message)

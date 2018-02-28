@@ -1,9 +1,5 @@
-// ON PAGE LOAD
-$( () => {
-     $(document).on('drop dragover', (e) => {
-        e.preventDefault();
-      });
-});
+// VARS
+var socket;
 
 // FUNCTIONS
 function beginAnalysis()
@@ -38,6 +34,25 @@ function upload_video_file()
         },
         success: function (data) {
             console.log('Successfully uploaded')
+            socket = io.connect('http://' + document.domain + ':' + location.port)
+
+            // Setup event listeners
+            socket.on('connect', () => {
+                // we emit a connected message to let the client know that we are connected
+                print("Connected to Server")
+              })
+
+
+            // Setup listeners in affectiva.js
+            setupSockets();
+            
         }
     })
 }
+
+// ON PAGE LOAD
+$( () => {
+    $(document).on('drop dragover', (e) => {
+       e.preventDefault();
+     });
+});

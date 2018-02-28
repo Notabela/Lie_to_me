@@ -1,3 +1,5 @@
+// socketIO
+
 var faceMode = affdex.FaceDetectorMode.LARGE_FACES;
 
 // Construct a FrameDetector and specify the image width / height and face detector mode.
@@ -7,8 +9,14 @@ var detector = new affdex.FrameDetector(faceMode)
 var startTimestamp;
 var timeBetweenDrawings = 2000  //20ms
 
-// socketIO
-var socket = io.connect('http://' + document.domain + ':' + location.port)
+var setupSockets = () => {
+
+  socket.on('frames_ready', () => {
+    console.log('Server ready to receive frames')
+    socket.emit('ready_receive', {data: 'Ready Receive'});
+  })
+
+}
 
 function draw(v,c,w,h) 
 {
@@ -169,16 +177,6 @@ detector.detectAllAppearance();
 $( () => {
   detector.start();
   $(".file-path").val("");
-
-  socket.on('connect', () => {
-    // we emit a connected message to let the client know that we are connected
-    socket.emit('connection_active', {data: 'Connected'});
-  })
-
-  socket.on('connect_ack', () => {
-    console.log('Server acknowledged connection')
-  })
-
 
 });
 
