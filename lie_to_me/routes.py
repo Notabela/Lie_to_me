@@ -37,9 +37,30 @@ def process_video(filepath):
     """
     convert_to_frames(filepath)
 
+    # Frame conversion complete
+    # Frames sit at os.path.join(basedir, 'static', 'data', 'tmp') and will be named
+    # accordingly -> 001, 002, 003 etc.
+    # for each file send five files and wait
+    # when you hear back from the front end, send another five
+
+    # We night need a local db with the following parameters
+    # Frame number
+    # base64 value
+    # Time stamp
+    # emotion data
+    # eye_blink data
+
 
 def cleanup(filepath):
     # CleanUp Temporary files
     subprocess.call(['rm', '-rf', 'uploads/*'])
     subprocess.call(['rm', '-rf', os.path.join(basedir, 'static', 'data', 'tmp', '*')])
         
+
+# dev docs, when upload is complete, affectiva will be ready and connected
+# python breaks file into its frame
+# for each frame in the frames created
+# give the frame an id
+# convert the frame to a base64 image
+# insert into a json of the frame and the base 64
+# emit 5 frames to affectiva and await response for 5 frames -> Then send 5 more
