@@ -2,7 +2,7 @@ import os
 import subprocess
 import threading
 from flask import render_template, request, jsonify, abort
-from lie_to_me import app, video, basedir, FFMPEG_PATH
+from lie_to_me import app, video, basedir, socketio, FFMPEG_PATH
 
 
 @app.route('/', methods=['GET', 'POST'])
