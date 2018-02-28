@@ -30,7 +30,8 @@ var setupSockets = () => {
     console.log('Received\n')
     let frame_number = data[0]
     let base64_image = btoa(String.fromCharCode(...new Uint8Array(data[1])));
-    
+    base64_image = 'data:image/jpg;base64,' + base64_image
+
     const video = document.getElementById("video");
     const canvas = document.getElementById("video_canvas");
     const context = canvas.getContext('2d');
