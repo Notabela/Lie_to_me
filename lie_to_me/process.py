@@ -4,14 +4,16 @@ from flask import abort
 import re
 import base64
 from flask_socketio import emit
-from lie_to_me import basedir, FFMPEG_PATH
-from lie_to_me.websockets import clients
+from lie_to_me import basedir, FFMPEG_PATH, app, socketio
 
 frames_dir = os.path.join(basedir, 'static', 'data', 'tmp')
 base64_frames = []
 current_frame = 0
 
 def convert_to_frames(filepath):
+    if not os.path.exists(frames_dir):
+        os.makedirs(frames_dir)
+
     output = os.path.join(frames_dir, "thumb%09d.jpg") # output filename
 
     try:
@@ -28,7 +30,7 @@ def process_video(filepath):
         Processes Video Submitted by User
     """
     convert_to_frames(filepath) # convert the video to images
-    ordered_files = sorted(os.listdir(frames_dir), key=lambda x: (int(re.sub('\D','',x)),x))
+    ordered_files = sorted(os.listdir(frames_dir), key=lambda x: (int(re.sub(r'\D','',x)),x))
 
     # Convert all frames to base64 images and begin calling
     for index, frame in enumerate(ordered_files):
@@ -39,8 +41,8 @@ def process_video(filepath):
 
     # Frames are ready - start sending them to for pooling
     # Let's emit a message indicating that we're about to start sending files
-    print(clients)
-    emit('frames_ready', {'data': 'Frames Ready'}, room=clients[0])
+    with app.test_request_context('/'):
+        socketio.emit('frames_ready', {'data': 'Frames Ready'})
 
 
 def cleanup(filepath):

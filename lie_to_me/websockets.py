@@ -3,18 +3,15 @@ from flask_socketio import emit
 from flask import request
 from lie_to_me import socketio
 
-clients = []
 
 # An active connection exists between client and server
 @socketio.on('connect')
 def handle_connect():
     print('Client connected')
-    clients.append(request.sid)
 
 @socketio.on('disconnect')
 def handle_disconnect():
     print('Client disconnected')
-    clients.remove(request.sid)
 
 # Server received a message from Client
 @socketio.on('message')
