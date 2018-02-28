@@ -7,8 +7,7 @@ from flask_socketio import emit
 from lie_to_me import basedir, FFMPEG_PATH, app, socketio
 
 frames_dir = os.path.join(basedir, 'static', 'data', 'tmp')
-base64_frames = []
-current_frame = 0
+base64_frames = {}
 
 def convert_to_frames(filepath):
     if not os.path.exists(frames_dir):
@@ -28,6 +27,7 @@ def convert_to_frames(filepath):
 def process_video(filepath):
     """
         Processes Video Submitted by User
+    
     """
     convert_to_frames(filepath) # convert the video to images
     ordered_files = sorted(os.listdir(frames_dir), key=lambda x: (int(re.sub(r'\D','',x)),x))
@@ -36,8 +36,9 @@ def process_video(filepath):
     for index, frame in enumerate(ordered_files):
         with open(os.path.join(frames_dir, frame), 'rb') as image_file:
             encoded_string = base64.b64encode(image_file.read())
-            base64_frames.append((index, encoded_string))
+            base64_frames[index] = encoded_string
 
+    cleanup()
 
     # Frames are ready - start sending them to for pooling
     # Let's emit a message indicating that we're about to start sending files
@@ -45,7 +46,7 @@ def process_video(filepath):
         socketio.emit('frames_ready', {'data': 'Frames Ready'})
 
 
-def cleanup(filepath):
+def cleanup():
     # CleanUp Temporary files
     subprocess.call(['rm', '-rf', 'uploads/*'])
     subprocess.call(['rm', '-rf', os.path.join(basedir, 'static', 'data', 'tmp', '*')])

@@ -7,13 +7,54 @@ var detector = new affdex.FrameDetector(faceMode)
 
 // Affectiva timer timestamp
 var startTimestamp;
-var timeBetweenDrawings = 2000  //20ms
+
+var establishTimeStamp = ( () => {
+  var executed = false;
+  return () => {
+    if (!executed) {
+      startTimestamp = (new Date()).getTime() / 1000;
+    }
+  }
+})();
+
+var timeBetweenDrawings = 200  //20ms
 
 var setupSockets = () => {
 
   socket.on('frames_ready', () => {
     console.log('Server ready to receive frames')
     socket.emit('ready_receive', {data: 'Ready Receive'});
+  })
+
+  socket.on('next_frame', (data) => {
+    console.log('Received\n')
+    let frame_number = data[0]
+    let base64_image = btoa(String.fromCharCode(...new Uint8Array(data[1])));
+    
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("video_canvas");
+    const context = canvas.getContext('2d');
+
+    var my_image = new Image()
+    my_image.src = base64_image
+    context.drawImage(my_image, 0, 0)
+    var imageData = context.getImageData(0, 0, 640, 480);
+
+    console.log('Received Frame: ' + frame_number)
+    console.log('Image: ' + base64_image)
+    console.log('image_data: ' + imageData)
+    console.log()
+
+    var now = (new Date()).getTime() / 1000;
+    var deltaTime = now - startTimestamp;
+    detector.process(imageData, deltaTime);
+
+    //socket.emit('next_frame', {data: 'Ready Receive'})
+  })
+
+  socket.on('no_more_frames', () => {
+    console.log('Complete')
+    stopEmotionDetection()
   })
 
 }
@@ -25,22 +66,22 @@ function draw(v,c,w,h)
   setTimeout(draw,timeBetweenDrawings,v,c,w,h);
 }
 
-function analyzeFrames(context, video)
-{
-    if(video.paused || video.ended) return false;
+// function analyzeFrames(context, video)
+// {
+//     if(video.paused || video.ended) return false;
 
-    var imageData = context.getImageData(0, 0, 640, 480);
+//     var imageData = context.getImageData(0, 0, 640, 480);
 
-    //Get current time in seconds
-    var now = (new Date()).getTime() / 1000;
+//     //Get current time in seconds
+//     var now = (new Date()).getTime() / 1000;
 
-    //Get delta time between the first frame and the current frame.
-    var deltaTime = now - startTimestamp;
+//     //Get delta time between the first frame and the current frame.
+//     var deltaTime = now - startTimestamp;
 
-    //Process the frame
-    detector.process(imageData, deltaTime);
-    setTimeout(analyzeFrames, timeBetweenDrawings, context, video);
-}
+//     //Process the frame
+//     detector.process(imageData, deltaTime);
+//     setTimeout(analyzeFrames, timeBetweenDrawings, context, video);
+// }
 
 function stopEmotionDetection()
 {
@@ -53,21 +94,24 @@ function stopEmotionDetection()
   }
 }
 
-function startEmotionDetection()
-{
-  if (detector && detector.isRunning) 
-  {
-    startTimestamp = (new Date()).getTime() / 1000;
-    const video = document.getElementById("video");
-    const canvas = document.getElementById("video_canvas");
-    const context = canvas.getContext('2d');
 
-    analyzeFrames(context, video);
-  }
-}
+// function startEmotionDetection()
+// {
+//   if (detector && detector.isRunning) 
+//   {
+
+
+//     //const video = document.getElementById("video");
+//     //const canvas = document.getElementById("video_canvas");
+//     //const context = canvas.getContext('2d');
+
+//     //analyzeFrames(context, video);
+//   }
+// }
 
 detector.addEventListener("onInitializeSuccess", () => {
   console.log("Affectiva loaded successfully");
+
   $(".overlay").html("");
   $(".file-field .btn").removeClass("disabled");
   $(".file-path").prop('disabled', false);
@@ -87,7 +131,7 @@ detector.addEventListener("onInitializeSuccess", () => {
 
     }
   });
-  
+
   const video = document.getElementById("video");
   const canvas = document.getElementById("video_canvas");
   const context = canvas.getContext('2d');
@@ -96,23 +140,20 @@ detector.addEventListener("onInitializeSuccess", () => {
     console.log("video play was called")
     draw(video, context, canvas.width, canvas.height)
 
-    $("#start_button").removeClass("disabled");
-    $("#stop_button").removeClass("disabled");
-
   }, false);
 
-  video.addEventListener('playing', () => {
-    console.log("video playing is called")
-  }, false)
+  // video.addEventListener('playing', () => {
+  //   console.log("video playing is called")
+  // }, false)
 
-  video.addEventListener('pause', () => {
-    console.log("Video was Paused");
-  }, false)
+  // video.addEventListener('pause', () => {
+  //   console.log("Video was Paused");
+  // }, false)
 
-  video.addEventListener('ended', () => {
-    console.log("Video Ended");
-    detector.stop();
-  }, false)
+  // video.addEventListener('ended', () => {
+  //   console.log("Video Ended");
+  //   detector.stop();
+  // }, false)
 
 });
 
@@ -137,6 +178,7 @@ detector.addEventListener("onImageResultsSuccess", (faces, image, timestamp) => 
     let expressions = faces[0].expressions
 
     // only focus on emotions
+    console.log(emotions)
   }
 
 });
