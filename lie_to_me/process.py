@@ -36,7 +36,7 @@ def process_video(filepath):
     for index, frame in enumerate(ordered_files):
         with open(os.path.join(frames_dir, frame), 'rb') as image_file:
             encoded_string = base64.b64encode(image_file.read())
-            base64_frames[index] = encoded_string
+            base64_frames[index] = encoded_string.decode('utf-8')
 
     cleanup()
 
