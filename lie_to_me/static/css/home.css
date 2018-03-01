@@ -15,6 +15,11 @@
     left:150px;
 }
 
+canvas {
+    width: 640px;
+    height: 480px;
+}
+
 video {
     visibility: hidden;
     width: 320px;

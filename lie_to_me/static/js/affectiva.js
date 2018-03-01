@@ -27,30 +27,37 @@ var setupSockets = () => {
   })
 
   socket.on('next_frame', (data) => {
-    console.log('Received\n')
     let frame_number = data[0]
-    let base64_image = btoa(String.fromCharCode(...new Uint8Array(data[1])));
-    base64_image = 'data:image/jpg;base64,' + base64_image
+    let base64_image = 'data:image/jpg;base64,' + data[1]
 
     const video = document.getElementById("video");
     const canvas = document.getElementById("video_canvas");
     const context = canvas.getContext('2d');
 
+    canvas.width = 1280
+    canvas.height = 720
+
+    $("#video_canvas").css('width', 640)
+    $("#video_canvas").css('height', 480)
+
     var my_image = new Image()
+
+    my_image.onload = () => {
+      console.log("Image loaded")
+
+      context.drawImage(my_image, 0, 0)
+      var imageData = context.getImageData(0, 0, 1280, 720);
+      establishTimeStamp()
+      var now = (new Date()).getTime() / 1000;
+      var deltaTime = now - startTimestamp;
+      detector.process(imageData, deltaTime);
+    }
+
     my_image.src = base64_image
-    context.drawImage(my_image, 0, 0)
-    var imageData = context.getImageData(0, 0, 640, 480);
 
     console.log('Received Frame: ' + frame_number)
     console.log('Image: ' + base64_image)
-    console.log('image_data: ' + imageData)
-    console.log()
-
-    var now = (new Date()).getTime() / 1000;
-    var deltaTime = now - startTimestamp;
-    detector.process(imageData, deltaTime);
-
-    //socket.emit('next_frame', {data: 'Ready Receive'})
+ 
   })
 
   socket.on('no_more_frames', () => {
@@ -172,6 +179,9 @@ detector.addEventListener("onInitializeFailure", () => {
 */
 detector.addEventListener("onImageResultsSuccess", (faces, image, timestamp) => {
 
+  console.log('Expression: ')
+  console.log(faces)
+
   if (faces.length > 0) 
   {
     let appearance = faces[0].appearance
@@ -179,8 +189,11 @@ detector.addEventListener("onImageResultsSuccess", (faces, image, timestamp) => 
     let expressions = faces[0].expressions
 
     // only focus on emotions
-    console.log(emotions)
+    console.log("detected actual face")
   }
+
+  socket.emit('get_next_frame', faces)
+  socket.emit('Hello There')
 
 });
 
