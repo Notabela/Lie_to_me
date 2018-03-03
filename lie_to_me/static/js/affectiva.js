@@ -8,6 +8,10 @@ var detector = new affdex.FrameDetector(faceMode)
 // Affectiva timer timestamp
 var startTimestamp;
 
+//Canvas properties
+var canvas_width = 640;
+var canvas_height = 480;
+
 var establishTimeStamp = ( () => {
   var executed = false;
   return () => {
@@ -21,36 +25,46 @@ var timeBetweenDrawings = 200  //20ms
 
 var setupSockets = () => {
 
-  socket.on('frames_ready', () => {
+  socket.on('canvas_width_height', (data) => {
     console.log('Server ready to receive frames')
+    console.log('width, height: ', data)
+
+    canvas_width = parseInt(data['width'])
+    canvas_height = parseInt(data['height'])
+
+    // Adjust canvas size to match video
+    document.getElementById("video_canvas").width = canvas_width
+    document.getElementById("video_canvas").height = canvas_height
+
     socket.emit('ready_receive', {data: 'Ready Receive'});
   })
 
   socket.on('next_frame', (data) => {
-    console.log('Received\n')
     let frame_number = data[0]
+
+    console.log('Received Frame: ' + frame_number)
+
     let base64_image = btoa(String.fromCharCode(...new Uint8Array(data[1])));
     base64_image = 'data:image/jpg;base64,' + base64_image
 
-    const video = document.getElementById("video");
     const canvas = document.getElementById("video_canvas");
     const context = canvas.getContext('2d');
 
-    var my_image = new Image()
-    my_image.src = base64_image
-    context.drawImage(my_image, 0, 0)
-    var imageData = context.getImageData(0, 0, 640, 480);
+    let image = new Image()
+    image.onload = function() {
+      console.log('Image loaded sucessfully')
+      context.drawImage(image, 0, 0)
+      let imgData = context.getImageData(0, 0, canvas_width, canvas_height);
 
-    console.log('Received Frame: ' + frame_number)
-    console.log('Image: ' + base64_image)
-    console.log('image_data: ' + imageData)
-    console.log()
+      establishTimeStamp()
+      var now = (new Date()).getTime() / 1000;
+      var deltaTime = now - startTimestamp;
+      detector.process(imgData, deltaTime);
+      //socket.emit('next_frame', {data: 'Ready Receive'})
+    };
+    
+    img.src = base64_image
 
-    var now = (new Date()).getTime() / 1000;
-    var deltaTime = now - startTimestamp;
-    detector.process(imageData, deltaTime);
-
-    //socket.emit('next_frame', {data: 'Ready Receive'})
   })
 
   socket.on('no_more_frames', () => {
@@ -59,30 +73,6 @@ var setupSockets = () => {
   })
 
 }
-
-function draw(v,c,w,h) 
-{
-  if(v.paused || v.ended) return false;
-  c.drawImage(v,0,0,w,h);
-  setTimeout(draw,timeBetweenDrawings,v,c,w,h);
-}
-
-// function analyzeFrames(context, video)
-// {
-//     if(video.paused || video.ended) return false;
-
-//     var imageData = context.getImageData(0, 0, 640, 480);
-
-//     //Get current time in seconds
-//     var now = (new Date()).getTime() / 1000;
-
-//     //Get delta time between the first frame and the current frame.
-//     var deltaTime = now - startTimestamp;
-
-//     //Process the frame
-//     detector.process(imageData, deltaTime);
-//     setTimeout(analyzeFrames, timeBetweenDrawings, context, video);
-// }
 
 function stopEmotionDetection()
 {
@@ -96,20 +86,6 @@ function stopEmotionDetection()
 }
 
 
-// function startEmotionDetection()
-// {
-//   if (detector && detector.isRunning) 
-//   {
-
-
-//     //const video = document.getElementById("video");
-//     //const canvas = document.getElementById("video_canvas");
-//     //const context = canvas.getContext('2d');
-
-//     //analyzeFrames(context, video);
-//   }
-// }
-
 detector.addEventListener("onInitializeSuccess", () => {
   console.log("Affectiva loaded successfully");
 
@@ -117,6 +93,7 @@ detector.addEventListener("onInitializeSuccess", () => {
   $(".file-field .btn").removeClass("disabled");
   $(".file-path").prop('disabled', false);
   $(".file-path").change( () => {
+
     if( $(".file-path").val().length > 0)
     {
       var URL = window.URL || window.webkitURL
@@ -133,29 +110,6 @@ detector.addEventListener("onInitializeSuccess", () => {
     }
   });
 
-  const video = document.getElementById("video");
-  const canvas = document.getElementById("video_canvas");
-  const context = canvas.getContext('2d');
-
-  video.addEventListener('play', () => {
-    console.log("video play was called")
-    draw(video, context, canvas.width, canvas.height)
-
-  }, false);
-
-  // video.addEventListener('playing', () => {
-  //   console.log("video playing is called")
-  // }, false)
-
-  // video.addEventListener('pause', () => {
-  //   console.log("Video was Paused");
-  // }, false)
-
-  // video.addEventListener('ended', () => {
-  //   console.log("Video Ended");
-  //   detector.stop();
-  // }, false)
-
 });
 
 detector.addEventListener("onInitializeFailure", () => {
@@ -171,6 +125,7 @@ detector.addEventListener("onInitializeFailure", () => {
   - timestamp: The timestamp of the captured image in seconds.
 */
 detector.addEventListener("onImageResultsSuccess", (faces, image, timestamp) => {
+  console.log("Success processing image")
 
   if (faces.length > 0) 
   {

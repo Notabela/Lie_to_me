@@ -5,7 +5,8 @@ from flask_uploads import UploadSet, configure_uploads, AllExcept, SCRIPTS, EXEC
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-FFMPEG_PATH = '/usr/local/bin/ffmpeg'
+FFMPEG_PATH  = '/usr/local/bin/ffmpeg' 
+FFPROBE_PATH = '/usr/local/bin/ffprobe'
 jsglue = JSGlue()
 video = UploadSet('videos', AllExcept(SCRIPTS + EXECUTABLES))
 
