@@ -131,11 +131,27 @@ detector.addEventListener("onImageResultsSuccess", (faces, image, timestamp) => 
   if (faces.length > 0) 
   {
     let appearance = faces[0].appearance
-    let emotions = faces[0].emotions  //key value pair dictionary
+    let emotions = faces[0].emotions  //key value pair dictionary of various 
     let expressions = faces[0].expressions
+    let featurePoints = faces[0].featurePoints // each elem contains x and y locations 
+
+    // Draw eye location on canvas
+
+    // Among the feature points
+    // Right eye
+    // 16 - outer right eye
+    // 17 - inner right eye
+    // 30 - upper corner right eye
+    // 31 - Lower corner right eye
+
+    //Left eye
+    // 18 - inner left eye
+    // 19 - outer left eye
+    // 32 - Upper corner left eye
+    // 33 - Lower corner left eye
   }
 
-  socket.emit('next_frame', {'data': faces})
+  //socket.emit('next_frame', {'data': faces})
 });
 
 /* 
