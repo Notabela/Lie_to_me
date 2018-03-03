@@ -39,13 +39,12 @@ function upload_video_file()
             // Setup event listeners
             socket.on('connect', () => {
                 // we emit a connected message to let the client know that we are connected
-                print("Connected to Server")
+                console.log("Connected to Server")
               })
 
 
             // Setup listeners in affectiva.js
             setupSockets();
-            
         }
     })
 }

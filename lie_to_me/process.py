@@ -1,4 +1,5 @@
 import os
+import glob
 import subprocess
 from flask import abort
 import re
@@ -8,6 +9,7 @@ from lie_to_me import basedir, FFMPEG_PATH, FFPROBE_PATH, app, socketio
 
 frames_dir = os.path.join(basedir, 'static', 'data', 'tmp')
 base64_frames = {}
+
 
 def convert_to_frames(filepath):
     if not os.path.exists(frames_dir):
@@ -25,7 +27,6 @@ def convert_to_frames(filepath):
         width, height = regex.match(output).groups()
 
         subprocess.call(ffmpeg_command)  # break video to its frames
-        # subprocess.call(['rm', '-fr', 'attachments'])
 
         return width, height
     except Exception as e:
@@ -45,17 +46,21 @@ def process_video(filepath):
     for index, frame in enumerate(ordered_files):
         with open(os.path.join(frames_dir, frame), 'rb') as image_file:
             encoded_string = base64.b64encode(image_file.read())
-            base64_frames[index] = encoded_string
+            base64_frames[index] = encoded_string.decode('utf-8')
 
     cleanup()
 
     # Frames are ready - start sending them to for pooling
     # Let's emit a message indicating that we're about to start sending files
-    with app.test_request_context('/'):
-        socketio.emit('canvas_width_height', {'width': width, 'height': height})
+    #with app.test_request_context('/'):
+    socketio.emit('canvas_width_height', {'width': width, 'height': height})
 
 
 def cleanup():
     # CleanUp Temporary files
-    subprocess.call(['rm', '-rf', os.path.join('uploads', '*')])
-    subprocess.call(['rm', '-rf', os.path.join(basedir, 'static', 'data', 'tmp', '*')])
+    for fl in glob.glob(os.path.join(basedir, 'static', 'data', 'tmp', '*')):
+        os.remove(fl)
+
+    for fl in glob.glob(os.path.join('uploads', '*')):
+        os.remove(fl)
+

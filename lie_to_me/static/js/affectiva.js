@@ -9,17 +9,8 @@ var detector = new affdex.FrameDetector(faceMode)
 var startTimestamp;
 
 //Canvas properties
-var canvas_width = 640;
-var canvas_height = 480;
-
-var establishTimeStamp = ( () => {
-  var executed = false;
-  return () => {
-    if (!executed) {
-      startTimestamp = (new Date()).getTime() / 1000;
-    }
-  }
-})();
+var canvas_width;
+var canvas_height;
 
 var timeBetweenDrawings = 200  //20ms
 
@@ -35,36 +26,46 @@ var setupSockets = () => {
     // Adjust canvas size to match video
     document.getElementById("video_canvas").width = canvas_width
     document.getElementById("video_canvas").height = canvas_height
+    document.getElementById("dummy_canvas").width = canvas_width
+    document.getElementById("dummy_canvas").height = canvas_height
+
+    // Adjust physical canvas css width to 640 * 480
+    $("#video_canvas").css('width', 640)
+    $("#video_canvas").css('height', 480)
 
     socket.emit('ready_receive', {data: 'Ready Receive'});
   })
 
   socket.on('next_frame', (data) => {
     let frame_number = data[0]
+    let base64_image = 'data:image/jpg;base64,' + data[1]
 
-    console.log('Received Frame: ' + frame_number)
-
-    let base64_image = btoa(String.fromCharCode(...new Uint8Array(data[1])));
-    base64_image = 'data:image/jpg;base64,' + base64_image
-
-    const canvas = document.getElementById("video_canvas");
+    const canvas = document.getElementById("dummy_canvas");
+    const canvas2 = document.getElementById("video_canvas");
     const context = canvas.getContext('2d');
+    const context2 = canvas2.getContext('2d');
 
-    let image = new Image()
-    image.onload = function() {
-      console.log('Image loaded sucessfully')
-      context.drawImage(image, 0, 0)
-      let imgData = context.getImageData(0, 0, canvas_width, canvas_height);
+    var my_image = new Image()
 
-      establishTimeStamp()
+    my_image.onload = () => {
+
+      context.drawImage(my_image, 0, 0)
+      context2.drawImage(my_image, 0, 0)
+      var imageData = context.getImageData(0, 0, canvas_width, canvas_height)
+
+      if (startTimestamp === undefined) 
+      {
+        startTimestamp = (new Date()).getTime() / 1000;
+      }
+
       var now = (new Date()).getTime() / 1000;
       var deltaTime = now - startTimestamp;
-      detector.process(imgData, deltaTime);
-      //socket.emit('next_frame', {data: 'Ready Receive'})
-    };
-    
-    img.src = base64_image
+      detector.process(imageData, deltaTime);
+    }
 
+    my_image.src = base64_image
+
+    console.log('Received Frame: ' + frame_number) 
   })
 
   socket.on('no_more_frames', () => {
@@ -132,11 +133,9 @@ detector.addEventListener("onImageResultsSuccess", (faces, image, timestamp) => 
     let appearance = faces[0].appearance
     let emotions = faces[0].emotions  //key value pair dictionary
     let expressions = faces[0].expressions
-
-    // only focus on emotions
-    console.log(emotions)
   }
 
+  socket.emit('next_frame', {'data': faces})
 });
 
 /* 
@@ -146,8 +145,8 @@ detector.addEventListener("onImageResultsSuccess", (faces, image, timestamp) => 
   - err_detail: A string contains the encountered exception.
 */
 detector.addEventListener("onImageResultsFailure", (image, timestamp, err_detail) => {
-  console.log(timestamp);
-  console.log(err_detail);
+  console.log(timestamp, err_detail);
+  console.log(image)
 });
 
 detector.addEventListener("onResetSuccess", () => {
