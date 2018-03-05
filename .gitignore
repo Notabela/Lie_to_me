@@ -102,3 +102,6 @@ ENV/
 .idea/
 node_modules/
 uploads/
+.vscode/
+.DS_Store
+data/
