@@ -151,7 +151,7 @@ detector.addEventListener("onImageResultsSuccess", (faces, image, timestamp) => 
     // 33 - Lower corner left eye
   }
 
-  //socket.emit('next_frame', {'data': faces})
+  socket.emit('next_frame', {'data': faces})
 });
 
 /* 

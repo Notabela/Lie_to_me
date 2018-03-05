@@ -43,6 +43,15 @@ def handle_next_frame_request(json):
     
     print("Previous frame data: {0}".format(str(json)))
 
+    # anger, contempt, disgust, engagement, fear, joy, sadness, surprise, valence
+    emotions = json['data'][0]['emotions']
+    expressions = json['data'][0]['expressions']
+
+    eye_closure = expressions['eyeClosure']
+
+    print(emotions)
+    print(eye_closure)
+
     if current_frame[0] < len(base64_frames):
         emit('next_frame', [current_frame[0], base64_frames[current_frame[0]]])
         current_frame[0] += 1
