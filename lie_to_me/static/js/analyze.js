@@ -54,4 +54,6 @@ $( () => {
     $(document).on('drop dragover', (e) => {
        e.preventDefault();
      });
+
+     $('input.timepicker').timepicker({ timeFormat: 'HH:mm:ss' });
 });
