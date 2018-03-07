@@ -40,6 +40,7 @@ var setupSockets = () => {
     let frame_number = data[0]
     let base64_image = 'data:image/jpg;base64,' + data[1]
 
+    // Get the dummy canvas that has been hidden on home page
     const canvas = document.getElementById("dummy_canvas");
     const canvas2 = document.getElementById("video_canvas");
     const context = canvas.getContext('2d');
@@ -49,10 +50,13 @@ var setupSockets = () => {
 
     my_image.onload = () => {
 
+      // bit base64 image unto both canvas and dummy canvas
       context.drawImage(my_image, 0, 0)
       context2.drawImage(my_image, 0, 0)
       var imageData = context.getImageData(0, 0, canvas_width, canvas_height)
 
+      // Affectiva requires timestamp, create initial before
+      // analyzing entire video
       if (startTimestamp === undefined) 
       {
         startTimestamp = (new Date()).getTime() / 1000;
@@ -97,6 +101,7 @@ detector.addEventListener("onInitializeSuccess", () => {
 
     if( $(".file-path").val().length > 0)
     {
+      // Load Video locally using uploaded file
       var URL = window.URL || window.webkitURL
       var file = document.getElementById('fileItem').files[0]
       var fileURL = URL.createObjectURL(file)

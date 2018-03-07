@@ -15,10 +15,32 @@
             </div>
             <div class="overlay">
                 {% include "loading.html" %}
-                <p id="loadingMsg">LOADING MODULES</p>
+                <p id="loadingMsg">LOADING...</p>
             </div>
         </div>
     </div>
+
+    <div class="constraint col s3 offset-s1">
+        <div class="card lime darken-2">
+            <div class="card-content white-text">
+                <span class="card-title">BASELINE</span>
+                <div class="input-field">
+                    <input id="base_start" type="text" class="timepicker" placeholder="START TIME">
+                    <input id="base_end" type="text" class="timepicker" placeholder="END TIME">
+                </div>
+            </div>
+        </div>
+
+        <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+                <span class="card-title">CRITICAL TIME</span>
+                <div class="input-field">
+                    <input id="crit_start" type="text" class="timepicker" placeholder="START TIME">
+                    <input id="crit_end" type="text" class="timepicker" placeholder="END TIME">
+                </div>
+            </div>
+        </div>
+      </div>
 
 </div>
 

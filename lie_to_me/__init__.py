@@ -4,9 +4,13 @@ from flask_socketio import SocketIO
 from flask_uploads import UploadSet, configure_uploads, AllExcept, SCRIPTS, EXECUTABLES
 import os
 
+# Base directory of webapp - should return ...somefolder/Lie_to_me
 basedir = os.path.abspath(os.path.dirname(__file__))
+
+# Path to FFMPEG/FFPROBE - set this to FFMPEG PATH in Windows/Mac
 FFMPEG_PATH  = '/usr/local/bin/ffmpeg' 
 FFPROBE_PATH = '/usr/local/bin/ffprobe'
+
 jsglue = JSGlue()
 video = UploadSet('videos', AllExcept(SCRIPTS + EXECUTABLES))
 

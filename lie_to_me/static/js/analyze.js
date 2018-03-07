@@ -9,6 +9,11 @@ function beginAnalysis()
     // replace upload form with progressbar
     $('#uploadFormDiv').css('display', 'none');
     $("#progressBarDiv").css('display', 'block');
+    let baseline_start = $('#base_start').val()
+    let baseline_end = $('#base_end').val()
+    let critical_start = $('#crit_start').val()
+    let critical_stop = $('#crit_end').val()
+
     upload_video_file();
 }
 
@@ -54,4 +59,13 @@ $( () => {
     $(document).on('drop dragover', (e) => {
        e.preventDefault();
      });
+
+     $('input.timepicker').timepicker({
+        timeFormat: 'HH:mm:ss',
+        defaultTime: '00:00:00',
+        dynamic: false,
+        dropdown: false,
+        scrollbar: false
+    });
+    
 });
