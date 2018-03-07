@@ -15,7 +15,7 @@
             </div>
             <div class="overlay">
                 {% include "loading.html" %}
-                <p id="loadingMsg">LOADING MODULES</p>
+                <p id="loadingMsg">LOADING...</p>
             </div>
         </div>
     </div>
@@ -25,8 +25,8 @@
             <div class="card-content white-text">
                 <span class="card-title">BASELINE</span>
                 <div class="input-field">
-                    <input type="text" class="timepicker" placeholder="START TIME">
-                    <input type="text" class="timepicker" placeholder="END TIME">
+                    <input id="base_start" type="text" class="timepicker" placeholder="START TIME">
+                    <input id="base_end" type="text" class="timepicker" placeholder="END TIME">
                 </div>
             </div>
         </div>
@@ -35,8 +35,8 @@
             <div class="card-content white-text">
                 <span class="card-title">CRITICAL TIME</span>
                 <div class="input-field">
-                    <input type="text" class="timepicker" placeholder="START TIME">
-                    <input type="text" class="timepicker" placeholder="END TIME">
+                    <input id="crit_start" type="text" class="timepicker" placeholder="START TIME">
+                    <input id="crit_end" type="text" class="timepicker" placeholder="END TIME">
                 </div>
             </div>
         </div>
