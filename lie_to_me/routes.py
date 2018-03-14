@@ -2,7 +2,7 @@ import os
 import threading
 from flask import render_template, request, jsonify, abort
 from lie_to_me import app, video, basedir, socketio
-from lie_to_me.process import process_video
+from lie_to_me.process import process_video, process_audio
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -13,6 +13,7 @@ def upload():
 
         # Process video on a new thread
         threading.Thread(target=process_video, args=[os.path.join('uploads', filename)]).start()
+        #threading.Thread(target=process_audio, args=[os.path.join('uploads', filename)]).start()
 
         return jsonify({'success': True}), 200, {'ContentType': 'application/json'}
 
