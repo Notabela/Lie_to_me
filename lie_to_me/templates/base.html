@@ -17,8 +17,10 @@
                 <div class="nav-wrapper">
                     <a href="#" class="brand-logo">Lie To Me</a>
                     <ul class="right">
-                        <li id="upload"><a href="#">Upload</a></li>
-                        <li id="analysis"><a href="#">Analysis</a></li>
+                        {% block links %}
+                        <li id="upload"><a href="#">UPLOAD</a></li>
+                        <li id="analysis"><a href="#">ANALYSIS</a></li>
+                        {% endblock %}
                     </ul>
                 </div>
             </nav>

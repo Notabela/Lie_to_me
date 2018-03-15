@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/analysis.css') }}" >
+{% endblock %}
+
+{% block links %}
+<li id="upload"><a href="{{ url_for('upload') }}">UPLOAD</a></li>
+<li class="active" id="analysis"><a href="#">ANALYSIS</a></li>
+{% endblock %}
+
+{% block bodycontent %}
+    <h1> Hello World!</h1>
+{% endblock %}

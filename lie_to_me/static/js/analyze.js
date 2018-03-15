@@ -1,6 +1,28 @@
 // VARS
 var socket;
 
+var text = ["LOADING A-Mei-Zing THINGS",
+            "WORKING MIRACLES",
+            "RESURRECTING DEAD MEMES",
+            "PREPARING FINAL FORM",
+            "DISPATCHING CARRIER PIGEONS",
+            "IS THIS THING ON..?",
+            "CALLING OUT YOUR LIES",
+            "WE'RE TESTING YOUR PATIENCE",
+            "WHY DON'T YOU ORDER A SANDWICH",
+            "THE BITS ARE FLOWING SLOWLY TODAY",
+            "WARMING UP LARGE HADRON COLLIDER",
+            "WARMING UP THE PROCESSORS",
+            "WORKING... WELL YOU KNOW...",
+            "RECALCULATING PI...",
+            "COMMENCING INFINITE LOOP",
+            "REWINDING THE DVD",
+            "BUY MORE RAM...",
+            "GO READ A BOOK, I'M NEARLY FINISHED",
+            "HACKING PROF. WEI'S SERVERS FOR MORE DATA"
+        ];
+
+var loadingMessagesInterval;
 // FUNCTIONS
 function beginAnalysis()
 {
@@ -39,6 +61,17 @@ function upload_video_file()
         },
         success: function (data) {
             console.log('Successfully uploaded')
+
+            // Setup funny loading messages and show loading view
+            $(".dim_overlay").css('display', 'block');
+            $(".progress").css('display', 'block');
+            $(".dim_loading_overlay").css('display', 'block');
+
+            loadingMessagesInterval = setInterval(() => {
+                let index = Math.floor(Math.random() * text.length-1);
+                $(".dim_loading_overlay").text(text[index])
+            }, 1000);
+
             socket = io.connect('http://' + document.domain + ':' + location.port)
 
             // Setup event listeners
@@ -67,5 +100,5 @@ $( () => {
         dropdown: false,
         scrollbar: false
     });
-    
+
 });

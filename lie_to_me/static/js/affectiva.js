@@ -74,6 +74,12 @@ var setupSockets = () => {
 
   socket.on('no_more_frames', () => {
     console.log('Complete')
+
+      //Remove Dim Screen and Loading Messages
+    $(".dim_overlay").css('display', 'none');
+    $(".progress").css('display', 'none');
+    $(".dim_loading_overlay").css('display', 'none');
+    clearInterval(loadingMessagesInterval);
     stopEmotionDetection()
   })
 
@@ -96,6 +102,7 @@ detector.addEventListener("onInitializeSuccess", () => {
 
   $(".overlay").html("");
   $(".file-field .btn").removeClass("disabled");
+  $(".results .btn-large").removeClass("disabled");
   $(".file-path").prop('disabled', false);
   $(".file-path").change( () => {
 

@@ -40,15 +40,16 @@ def handle_ready_receive(json):
         emit('next_frame', [current_frame[0], base64_frames[current_frame[0]]])
         current_frame[0] += 1   
 
+
 # Affectiva Client is requesting the next frame and submitting the 
 # emotion data of the previous frame in format json
 @socketio.on('next_frame')
 def handle_next_frame_request(json):
     global current_frame
     
-    print("Previous frame data: {0}".format(str(json)))
+    #print("Previous frame data: {0}".format(str(json)))
 
-    if json:
+    if json['data']:
         # anger, contempt, disgust, engagement, fear, joy, sadness, surprise, valence
         emotions = json['data'][0]['emotions']
         expressions = json['data'][0]['expressions']
