@@ -1,9 +1,9 @@
 import os
 import glob
 import subprocess
-from flask import abort
 import re
 import base64
+from flask import abort
 from flask_socketio import emit
 from lie_to_me import basedir, FFMPEG_PATH, FFPROBE_PATH, app, socketio
 
