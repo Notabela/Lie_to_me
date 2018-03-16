@@ -4,6 +4,7 @@ import subprocess
 from flask import abort
 from math import cos, log10,pi
 from numpy import abs
+import shelve
 import re
 import base64
 from flask import abort
@@ -93,11 +94,14 @@ def process_audio(filepath):
     data3, data4 = audio.maxpitchamp(frames)
     data5 = audio.vowelduration(frames, data4)
 
-    print(data1)
-    print(data2)
-    print(data3)
-    print(data4)
-    print(data5)
+    json_path = os.path.join(basedir, 'static', 'data', 'tmp_json')
+
+    with shelve.open(os.path.join(json_path, 'audio_data.shlf')) as shelf:
+        shelf['mean_frame'] = data1
+        shelf['mean_audio'] = data2
+        shelf['mean_pitch'] = data3
+        shelf['mean_amp'] = data4
+        shelf['vowel_duration'] = data5
 
 
 def cleanup_video():
@@ -115,3 +119,34 @@ def cleanup_audio():
     """
     for fl in glob.glob(os.path.join(basedir, 'static', 'data', 'tmp_audio', '*')):
         os.remove(fl)
+
+
+def cleanup_data():
+    """ Clean up temporary stored data
+    """
+    for fl in glob.glob(os.path.join(basedir, 'static', 'data', 'tmp_json', '*')):
+        os.remove(fl)
+
+
+def detect_blinks(eye_closure_list):
+    """
+        Returns the frames where blinks occured
+    """
+    eye_cl_thresh = 70          # eye closure >= 70 to be considered closed
+    eye_cl_consec_frames = 4    # 4 or more consecutive frames to be considered a blink
+    counter = 0
+
+    # Array of frames where blink occured
+    blink_frames = []
+
+    for frame_number, eye_thresh in enumerate(eye_closure_list):
+        if eye_thresh is None:
+            continue
+        elif eye_thresh > eye_cl_thresh:
+            counter += 1
+        else:
+            if counter >= eye_cl_consec_frames:
+                blink_frames.append(frame_number)
+            counter = 0
+
+    return blink_frames

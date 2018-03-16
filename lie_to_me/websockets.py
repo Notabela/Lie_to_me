@@ -2,14 +2,17 @@
     Dependent file of Flask Socketio
     Sets up the various socket call endpoints
 """
+import shelve
 from flask_socketio import emit, disconnect
 from flask import request
-from lie_to_me import socketio
-from lie_to_me.process import base64_frames
+from lie_to_me import socketio, basedir, os
+from lie_to_me.process import base64_frames, detect_blinks
 
 # keeps track of frame being sent (0 to len(base64_frames))
 # stored as a list to allow for referencing
 current_frame = [0] 
+emotion_data = []
+eye_closure_data = []
 
 
 # An active connection exists between client and server
@@ -47,14 +50,20 @@ def handle_ready_receive(json):
 def handle_next_frame_request(json):
     global current_frame
     
-    #print("Previous frame data: {0}".format(str(json)))
+    # print("Previous frame data: {0}".format(str(json)))
 
     if json['data']:
         # anger, contempt, disgust, engagement, fear, joy, sadness, surprise, valence
         emotions = json['data'][0]['emotions']
         expressions = json['data'][0]['expressions']
-
         eye_closure = expressions['eyeClosure']
+
+        emotion_data.append(emotions)
+        eye_closure_data.append(eye_closure)
+    else:
+        # No data was obtained
+        emotion_data.append(None)
+        eye_closure_data.append(None)
 
     if current_frame[0] < len(base64_frames):
         emit('next_frame', [current_frame[0], base64_frames[current_frame[0]]])
@@ -62,3 +71,14 @@ def handle_next_frame_request(json):
     else:
         emit('no_more_frames', 'Completed')
         disconnect()
+
+        # Parse Data and Save Data to Disk
+        blink_data = detect_blinks(eye_closure_data)
+
+        json_path = os.path.join(basedir, 'static', 'data', 'tmp_json')
+
+        with shelve.open(os.path.join(json_path, 'facial_data.shlf')) as shelf:
+            shelf['emotion_data'] = emotion_data
+            shelf['blink_data'] = blink_data
+
+

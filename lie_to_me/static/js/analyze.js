@@ -11,7 +11,7 @@ var text = ["LOADING A-Mei-Zing THINGS",
             "WE'RE TESTING YOUR PATIENCE",
             "WHY DON'T YOU ORDER A SANDWICH",
             "THE BITS ARE FLOWING SLOWLY TODAY",
-            "WARMING UP LARGE HADRON COLLIDER",
+            "WAITING FOR APPROVAL FROM PROF. WEI",
             "WARMING UP THE PROCESSORS",
             "WORKING... WELL YOU KNOW...",
             "RECALCULATING PI...",
@@ -19,7 +19,7 @@ var text = ["LOADING A-Mei-Zing THINGS",
             "REWINDING THE DVD",
             "BUY MORE RAM...",
             "GO READ A BOOK, I'M NEARLY FINISHED",
-            "HACKING PROF. WEI'S SERVERS FOR MORE DATA"
+            "HACKING PROF. WEI'S SERVERS FOR MORE DATA..."
         ];
 
 var loadingMessagesInterval;
@@ -68,9 +68,9 @@ function upload_video_file()
             $(".dim_loading_overlay").css('display', 'block');
 
             loadingMessagesInterval = setInterval(() => {
-                let index = Math.floor(Math.random() * text.length-1);
+                let index = Math.floor(Math.random() * text.length);
                 $(".dim_loading_overlay").text(text[index])
-            }, 1000);
+            }, 2000);
 
             socket = io.connect('http://' + document.domain + ':' + location.port)
 

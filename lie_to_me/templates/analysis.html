@@ -2,6 +2,7 @@
 
 {% block stylesheets %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/analysis.css') }}" >
+<link href="https://fonts.googleapis.com/css?family=Limelight" rel="stylesheet">
 {% endblock %}
 
 {% block links %}
@@ -10,5 +11,24 @@
 {% endblock %}
 
 {% block bodycontent %}
-    <h1> Hello World!</h1>
+    <div id="blinkDiv">
+        <h3>Blink Chart</h3>
+        <canvas id="blinkChart" width="100%" height="30%"></canvas>
+    </div>
+
+    <div id="emotionDiv">
+        <h3>Emotion Chart</h3>
+        <canvas id="emotionChart" width="100%" height="30%"></canvas>
+    </div>
+
+    <div id="audioDiv">
+        <h3>Audio Chart</h3>
+        <canvas id="audioChart" width="100%" height="30%"></canvas>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+<script src= {{ url_for('static', filename='js/analysis.js')}} ></script>
 {% endblock %}

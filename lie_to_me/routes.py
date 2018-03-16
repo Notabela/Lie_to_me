@@ -2,7 +2,7 @@
 import os
 import threading
 from flask import render_template, request, jsonify
-from lie_to_me import app, video
+from lie_to_me import app, video, basedir
 from lie_to_me.process import process_video, process_audio
 
 
