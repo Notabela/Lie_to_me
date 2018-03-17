@@ -7,11 +7,6 @@ from lie_to_me import thinkdsp
 # In this analysis the speech signals are divided into
 # frames of length 256 samples (.023 sec.).
 
-# Path to files
-input_path = 'input.mp4'
-audio_path = 'audio.wav'
-images_path = 'images/frame%d.jpg'
-
 # Value from the research paper
 samples_per_frame = 256
 
@@ -141,22 +136,18 @@ def sampling(framearray):
     """
 
     index = 40  # or 20 for female
-    framesample = []
 
-    # Split frames and calculate maximum amplitude
+    pitchamp = []
+    pitchperiod = []
+    # Split frames and seek next available peek to find pitch period
     for frame in framearray:
         framesplit = frame.ys[index:int(samples_per_frame / 2)].tolist()
         value = max(framesplit)
         maxindex = framesplit.index(value) + index
-        framesample.append(thinkdsp.Wave(frame.ys[maxindex],
-                                         frame.ts[maxindex],
-                                         frame.framerate))
+        pitchamp.append(value)
+        pitchperiod.append(maxindex)
 
-    # Amplitude of the signal at Pitch Period
-    # Pitch Period is index(framesample) (Not sure what this is yet)
-    # F(Pitch Period) is frame number with pitch period given.
-
-    return framesample
+    return pitchamp, pitchperiod
 
 
 # Calculate mean energy of utterance
@@ -165,63 +156,70 @@ def meanenergy(energyarray):
     Low predictability rate (61%)
 
     :param energyarray: array of energies per frame (waves)
-    :return meanframe: array of mean energies per frame (waves)
-    :return meanaudio: average energy throughout file
+    :return meanaudio: average energy throughout utterance
     """
-    meanframe = []
+
     meanaudio = 0
+
     for energies in energyarray:
-        mean = float(energies/len(energyarray))
         meanaudio += energies
-        meanframe.append(mean)
 
     meanaudio /= len(energyarray)
 
-    return meanframe, meanaudio
+    return meanaudio[0]
 
 
-def maxpitchamp(framearray):
+def maxpitchamp(amparray):
     """ Max Pitch Amplitude audio feature:
     High Predictability rate (86%)
 
-    :param framearray: array of sampled cepstums (waves)
-    :return maxpitch: array of max pitch amplitudes
-    :return maxAmp: maximum pitch amplitude
+    :param amparray: array of pitch period amplitudes (floats)
+    :return maxamp: Max pitch period amplitude
     """
 
-    maxpitch = []
+    maxamp = max(amparray)
 
-    for frames in framearray:
-        maxpitch.append(max(frames.ys))
-        print(frames.ts)
-
-    print("Max Pitch Amp stuff:")
-
-    maxamp = max(maxpitch)
-    return maxpitch, maxamp
+    return maxamp
 
 
-def vowelduration(framearray, maxamp):
+def vowelduration(amparray, maxamp):
     """ Vowel Duration audio feature:
     High Predictability rate (82%)
 
-    :param framearray: array of sampled cepstums (waves)
+    :param amparray: array of maximum amplitudes (float)
     :param maxamp: maximum pitch amplitude
-    :return vowels: array of vowel durations in msec
+    :return voweldur: vowel duration in msec (float)
     """
 
-    vowels = []
-    v = 0
+    voweldur = 0
+    threshold = 0.7 * maxamp
 
-    threshold = 0.1 * maxamp
-    for frames in framearray:
-
-        for sample in frames.ys:
-            if sample >= threshold:
-                v += 1
-
-        vowels.append(0.23*(v/2))
+    for amp in amparray:
         v = 0
+        if amp >= threshold:
+            v = 1
 
-    print("Vowel Duration stuff:")
-    return vowels
+        voweldur += (v/2)
+
+    voweldur *= 0.23
+    return voweldur
+
+
+def fundamentalf(periodarray, framelength):
+    """Calculates pitch deviation to detect stress
+       if pitch deviation >= 5, classified as stressed
+
+       :param periodarray: array of pitch periods (index)
+       :param framelength: length of frames in seconds
+       :return average: average Fundamental Frequency for utterance
+    """
+    fundarray = []
+
+    for period in periodarray:
+        temp = period / (samples_per_frame/2) * framelength
+        F0 = 1/temp
+        fundarray.append(F0)
+
+    average = sum(fundarray)/len(fundarray)
+
+    return average

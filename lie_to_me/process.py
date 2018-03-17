@@ -43,14 +43,15 @@ def convert_audio(filepath):
     if not os.path.exists(audio_dir):
         os.makedirs(audio_dir)
 
-    output = os.path.join(audio_dir, "audio.wav")
+    output = os.path.join(audio_dir, "%03d.wav")
 
     try:
-        ffprobe_command = [ FFPROBE_PATH, '-v', 'error', '-show_entries', 'stream=width,height', '-of', 'default=noprint_wrappers=1', filepath]
-        ffmpeg_command = [ FFMPEG_PATH, '-i', filepath, '-ar', '11000', '-ac', '2', output]
-
+        ffmpeg_command = [FFMPEG_PATH, '-i', filepath, '-ar', '11000', '-ac', '2',
+                          '-f', 'segment', '-segment_time', '-2', output]
         subprocess.call(ffmpeg_command)  # convert video into wave file
-        return output
+
+        files = [(audio_dir + '/' + f) for f in os.listdir(audio_dir)]
+        return files
 
     except Exception as e:
         print(e)
@@ -81,27 +82,31 @@ def process_video(filepath):
 
 def process_audio(filepath):
 
-    output = convert_audio(filepath)
-    frames = audio.split(output)
-    filteredframes = audio.applyhamming(frames)
-    energy = audio.energy(filteredframes)
-    fourier = audio.fourier(filteredframes)
-    frames = audio.inverse_fourier(fourier)
-    frames = audio.sampling(frames)
-
-    # Implemented Features, read audio.py for return values
-    data1, data2 = audio.meanenergy(energy)
-    data3, data4 = audio.maxpitchamp(frames)
-    data5 = audio.vowelduration(frames, data4)
-
     json_path = os.path.join(basedir, 'static', 'data', 'tmp_json')
+    results = []
+    output = convert_audio(filepath)
 
-    with shelve.open(os.path.join(json_path, 'audio_data.shlf')) as shelf:
-        shelf['mean_frame'] = data1
-        shelf['mean_audio'] = data2
-        shelf['mean_pitch'] = data3
-        shelf['mean_amp'] = data4
-        shelf['vowel_duration'] = data5
+    for files in output:
+        frames, framelength = audio.split(files)
+        filteredframes = audio.applyhamming(frames)
+        energy = audio.energy(filteredframes)
+        fourier = audio.fourier(filteredframes)
+        frames = audio.inverse_fourier(fourier)
+        pitchamp, pitchperiod = audio.sampling(frames)
+
+        # Implemented Features, read audio.py for return values
+        data1 = audio.meanenergy(energy)
+        data2 = audio.maxpitchamp(pitchamp)
+        data3 = audio.vowelduration(pitchamp, data2)
+        data4 = audio.fundamentalf(pitchperiod, framelength)
+
+        #results.append([data1, data2, data3, data4])
+
+        with shelve.open(os.path.join(json_path, 'audio_data.shlf')) as shelf:
+            shelf['utterance_energy'] = data1
+            shelf['max_pitch_amp'] = data2
+            shelf['vowel_duration'] = data3
+            shelf['fundamental_freq'] = data4
 
 
 def cleanup_video():
