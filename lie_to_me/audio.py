@@ -36,7 +36,7 @@ def split(input_file):
         currentstart = index * framelength
         frames.append(wave.segment(start=currentstart, duration=framelength))
 
-    return frames
+    return frames, framelength
 
 
 # Computing Hamming Window

@@ -60,8 +60,7 @@ def convert_audio(filepath):
 
 def process_video(filepath):
     """
-        Processes Video Submitted by User
-    
+        Processes Video Submitted by User 
     """
     width, height = convert_to_frames(filepath) # convert the video to images
     ordered_files = sorted(os.listdir(frames_dir), key=lambda x: (int(re.sub(r'\D','',x)),x))
@@ -81,7 +80,8 @@ def process_video(filepath):
 
 
 def process_audio(filepath):
-
+    """ Process Audio component of Video
+    """
     json_path = os.path.join(basedir, 'static', 'data', 'tmp_json')
     results = []
     output = convert_audio(filepath)
@@ -100,7 +100,11 @@ def process_audio(filepath):
         data3 = audio.vowelduration(pitchamp, data2)
         data4 = audio.fundamentalf(pitchperiod, framelength)
 
-        #results.append([data1, data2, data3, data4])
+        # results.append([data1, data2, data3, data4])
+        print(data1)
+        print(data2)
+        print(data3)
+        print(data4)
 
         with shelve.open(os.path.join(json_path, 'audio_data.shlf')) as shelf:
             shelf['utterance_energy'] = data1
