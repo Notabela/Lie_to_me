@@ -164,9 +164,11 @@ def meanenergy(energyarray):
     for energies in energyarray:
         meanaudio += energies
 
-    meanaudio /= len(energyarray)
+    if len(energyarray) > 0:
+        meanaudio /= len(energyarray)
+        return meanaudio[0]
 
-    return meanaudio[0]
+    return meanaudio
 
 
 def maxpitchamp(amparray):
@@ -177,7 +179,9 @@ def maxpitchamp(amparray):
     :return maxamp: Max pitch period amplitude
     """
 
-    maxamp = max(amparray)
+    maxamp = 0
+    if len(amparray) > 0:
+        maxamp = max(amparray)
 
     return maxamp
 
@@ -220,6 +224,8 @@ def fundamentalf(periodarray, framelength):
         F0 = 1/temp
         fundarray.append(F0)
 
-    average = sum(fundarray)/len(fundarray)
+    average = 0
+    if len(fundarray) > 0:
+        average = sum(fundarray)/len(fundarray)
 
     return average
