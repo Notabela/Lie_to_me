@@ -20,7 +20,7 @@ def convert_to_frames(filepath):
     try:
         ffprobe_command = [ FFPROBE_PATH, '-v', 'error', '-show_entries', 'stream=width,height', '-of', 'default=noprint_wrappers=1', filepath]
         ffmpeg_command = [ FFMPEG_PATH, '-i', filepath, output, '-hide_banner' ]
-        
+
         proc = subprocess.Popen(ffprobe_command, stdout=subprocess.PIPE)
         output = proc.stdout.read().decode('utf-8')
         regex = re.compile(r"[a-z]+=([0-9]+)\n[a-z]+=([0-9]+)\n")
@@ -37,7 +37,7 @@ def convert_to_frames(filepath):
 def process_video(filepath):
     """
         Processes Video Submitted by User
-    
+
     """
     width, height = convert_to_frames(filepath) # convert the video to images
     ordered_files = sorted(os.listdir(frames_dir), key=lambda x: (int(re.sub(r'\D','',x)),x))
@@ -48,7 +48,7 @@ def process_video(filepath):
             encoded_string = base64.b64encode(image_file.read())
             base64_frames[index] = encoded_string.decode('utf-8')
 
-    cleanup()
+    #cleanup()
 
     # Frames are ready - start sending them to for pooling
     # Let's emit a message indicating that we're about to start sending files
@@ -63,4 +63,3 @@ def cleanup():
 
     for fl in glob.glob(os.path.join('uploads', '*')):
         os.remove(fl)
-

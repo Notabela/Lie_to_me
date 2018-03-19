@@ -6,6 +6,7 @@ from flask_socketio import emit, disconnect
 from flask import request
 from lie_to_me import socketio
 from lie_to_me.process import base64_frames
+from lie_to_me.analyze.py import microexpression_analyzer
 
 # keeps track of frame being sent (0 to len(base64_frames))
 # stored as a list to allow for referencing
@@ -49,19 +50,16 @@ def handle_next_frame_request(json):
     print("Previous frame data: {0}".format(str(json)))
 
     # anger, contempt, disgust, engagement, fear, joy, sadness, surprise, valence
-    emotions = json['data'][0]['emotions']
-    expressions = json['data'][0]['expressions']
+    if json:
+        emotions = json['data'][0]['emotions']
+        expressions = json['data'][0]['expressions']
 
-    eye_closure = expressions['eyeClosure']
-
-    print(emotions)
-    print(eye_closure)
-
-    exit()
+        eye_closure = expressions['eyeClosure']
 
     if current_frame[0] < len(base64_frames):
         emit('next_frame', [current_frame[0], base64_frames[current_frame[0]]])
         current_frame[0] += 1
     else:
+        print(microexpression_analyzer(json['data'][0]['emotions']), current_frame, 30)
         emit('no_more_frames', 'Completed')
         disconnect()
