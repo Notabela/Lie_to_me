@@ -41,10 +41,9 @@ def handle_ready_receive(json):
 
     if current_frame[0] < len(base64_frames):
         emit('next_frame', [current_frame[0], base64_frames[current_frame[0]]])
-        current_frame[0] += 1   
+        current_frame[0] += 1
 
-
-# Affectiva Client is requesting the next frame and submitting the 
+# Affectiva Client is requesting the next frame and submitting the
 # emotion data of the previous frame in format json
 @socketio.on('next_frame')
 def handle_next_frame_request(json):
@@ -80,5 +79,3 @@ def handle_next_frame_request(json):
         with shelve.open(os.path.join(json_path, 'facial_data.shlf')) as shelf:
             shelf['emotion_data'] = emotion_data
             shelf['blink_data'] = blink_data
-
-
