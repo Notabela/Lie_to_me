@@ -1,5 +1,5 @@
 from random import *
-#micro expressions happen in 1/25th of a second or 15 frames
+# micro expressions happen in 1/25th of a second or 15 frames
 
 # microexpression_analyzer:
 #   Function parameters:
@@ -11,6 +11,7 @@ from random import *
 #       possible micro expression was detechted
 #
 
+
 def microexpression_analyzer(emotions, num_of_frames, fps):
     current_max = 0
     previous_max = 0
@@ -18,11 +19,14 @@ def microexpression_analyzer(emotions, num_of_frames, fps):
     flag = 0
     previous_emotion = ''
     emotion_at_start = ''
-    list_of_emotions = ['anger', 'contempt', 'disgust', 'fear', 'happiness', 'joy','sadness','surprise']
+    list_of_emotions = ['anger', 'contempt', 'disgust', 'fear', 'happiness', 'joy', 'sadness', 'surprise']
     timestamps = []
 
     for i in range(num_of_frames):
         # Store current max of emotions
+        if not emotions:
+            continue
+
         current_max = max(emotions[i]['anger'],
                           emotions[i]['contempt'],
                           emotions[i]['disgust'],
@@ -38,7 +42,7 @@ def microexpression_analyzer(emotions, num_of_frames, fps):
 
         if i == 0:
             previous_max = current_max
-            previous_emotion= current_emotion
+            previous_emotion = current_emotion
             continue
 
         # If previous_emotion is not equal to current_emotion then reset the counter and emotion_at_start
@@ -59,13 +63,13 @@ def microexpression_analyzer(emotions, num_of_frames, fps):
             minutes = seconds / 60
             if minutes < 1:
                 minutes = 0
-            timestamps.append('{}:{}'.format(minutes,seconds))
+            timestamps.append('{}:{}'.format(minutes, seconds))
             microexpression_loop_counter = 0
             emotion_at_start = ''
             flag = 0
             continue
         # Record current max and previous max for next the analysis of the next ones
         previous_max = current_max
-        previous_emotion= current_emotion
+        previous_emotion = current_emotion
 
     return timestamps
