@@ -24,14 +24,14 @@ var setupSockets = () => {
     canvas_height = parseInt(data['height'])
 
     // Adjust canvas size to match video
-    document.getElementById("video_canvas").width = canvas_width
-    document.getElementById("video_canvas").height = canvas_height
+    //document.getElementById("video_canvas").width = canvas_width
+    //document.getElementById("video_canvas").height = canvas_height
     document.getElementById("dummy_canvas").width = canvas_width
     document.getElementById("dummy_canvas").height = canvas_height
 
     // Adjust physical canvas css width to 640 * 480
-    $("#video_canvas").css('width', 640)
-    $("#video_canvas").css('height', 480)
+    //$("#video_canvas").css('width', 640)
+    //$("#video_canvas").css('height', 480)
 
     socket.emit('ready_receive', {data: 'Ready Receive'});
   })
@@ -42,9 +42,9 @@ var setupSockets = () => {
 
     // Get the dummy canvas that has been hidden on home page
     const canvas = document.getElementById("dummy_canvas");
-    const canvas2 = document.getElementById("video_canvas");
+    //const canvas2 = document.getElementById("video_canvas");
     const context = canvas.getContext('2d');
-    const context2 = canvas2.getContext('2d');
+    //const context2 = canvas2.getContext('2d');
 
     var my_image = new Image()
 
@@ -52,7 +52,7 @@ var setupSockets = () => {
 
       // bit base64 image unto both canvas and dummy canvas
       context.drawImage(my_image, 0, 0)
-      context2.drawImage(my_image, 0, 0)
+      // context2.drawImage(my_image, 0, 0)
       var imageData = context.getImageData(0, 0, canvas_width, canvas_height)
 
       // Affectiva requires timestamp, create initial before
@@ -74,6 +74,12 @@ var setupSockets = () => {
 
   socket.on('no_more_frames', () => {
     console.log('Complete')
+
+      //Remove Dim Screen and Loading Messages
+    $(".dim_overlay").css('display', 'none');
+    $(".progress").css('display', 'none');
+    $(".dim_loading_overlay").css('display', 'none');
+    clearInterval(loadingMessagesInterval);
     stopEmotionDetection()
   })
 
@@ -96,6 +102,7 @@ detector.addEventListener("onInitializeSuccess", () => {
 
   $(".overlay").html("");
   $(".file-field .btn").removeClass("disabled");
+  $(".results .btn-large").removeClass("disabled");
   $(".file-path").prop('disabled', false);
   $(".file-path").change( () => {
 

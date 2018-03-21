@@ -4,11 +4,24 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/home.css') }}" >
 {% endblock %}
 
+{% block links %}
+<li class="active" id="upload"><a href="#">UPLOAD</a></li>
+<li id="analysis"><a href="{{ url_for('analysis') }}">ANALYSIS</a></li>
+{% endblock %}
+
 {% block bodycontent %}
+<div class="dim_overlay">
+  <div class="progress">
+      <div class="indeterminate"></div>
+  </div>
+        <h5 class="dim_loading_overlay">LOADING MODULES</h5>
+</div>
+
 <div class="row">
     <div class="canvas_wrap col s7">
         <div id="canvas-wrap">
-            <canvas id="video_canvas"></canvas>
+            <canvas id="video_canvas" style="display: none"></canvas>
+            <div id="dummy_space"></div>
             <canvas id="dummy_canvas" width="1024" height="768" style="display: none"></canvas> 
             <div class="overlay_2">
                 <video id="video" controls></video>
@@ -67,7 +80,7 @@
     </div>
 
     <div class="results col s3 offset-s3">
-        <button class="btn-large waves-effect waves-light" onclick="beginAnalysis()">Analyze<i class="material-icons right">sync</i></button>
+        <button class="btn-large waves-effect waves-light disabled" onclick="beginAnalysis()">Analyze<i class="material-icons right">sync</i></button>
     </div>
 </div>
 
