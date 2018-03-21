@@ -108,30 +108,6 @@ def process_audio(filepath):
     cleanup_audio()
 
 
-def cleanup_video():
-    """ Clean up temporary frames and uploaded file
-    """
-    for fl in glob.glob(os.path.join(basedir, 'static', 'data', 'tmp_video', '*')):
-        os.remove(fl)
-
-    for fl in glob.glob(os.path.join('uploads', '*')):
-        os.remove(fl)
-
-
-def cleanup_audio():
-    """ Clean up temporary audio files
-    """
-    for fl in glob.glob(os.path.join(basedir, 'static', 'data', 'tmp_audio', '*')):
-        os.remove(fl)
-
-
-def cleanup_data():
-    """ Clean up temporary stored data
-    """
-    for fl in glob.glob(os.path.join(basedir, 'static', 'data', 'tmp_json', '*')):
-        os.remove(fl)
-
-
 def detect_blinks(eye_closure_list):
     """
         Returns the frames where blinks occured
@@ -154,3 +130,100 @@ def detect_blinks(eye_closure_list):
             counter = 0
 
     return blink_frames
+
+
+def microexpression_analyzer(emotions, fps):
+    """Micro expressions happen in 1/25th of a second or 15 frames
+
+        Microexpression_analyzer:
+        Function parameters:
+          **emotions: A dictionary of emotions and their coresponding
+          number value from 1 to 100 and the index is
+          the current frame e.g emotions[0]['anger']
+        Return:
+          The function returns a list of timestamps where a
+          possible micro expression was detechted
+    """
+    current_max = 0
+    previous_max = 0
+    microexpression_loop_counter = 0
+    flag = 0
+    previous_emotion = ''
+    emotion_at_start = ''
+    list_of_emotions = ['anger', 'contempt', 'disgust', 'fear', 'happiness', 'joy', 'sadness', 'surprise']
+    timestamps = []
+
+    for i in range(len(emotions)):
+        # Store current max of emotions
+        if not emotions:
+            continue
+
+        current_max = max(emotions[i]['anger'],
+                          emotions[i]['contempt'],
+                          emotions[i]['disgust'],
+                          emotions[i]['happiness'],
+                          emotions[i]['joy'],
+                          emotions[i]['sadness'],
+                          emotions[i]['surprise'])
+
+        # Store the current emotion
+        for key in emotions[i].keys():
+            if current_max == emotions[i][key]:
+                current_emotion = key
+
+        if i == 0:
+            previous_max = current_max
+            previous_emotion = current_emotion
+            continue
+
+        # If previous_emotion is not equal to current_emotion then reset the counter and emotion_at_start
+        if previous_emotion != current_emotion:
+            if microexpression_loop_counter != 15:
+                microexpression_loop_counter = 0
+                microexpression_loop_counter += 1
+                emotion_at_start = previous_emotion
+
+        # Checking to see if the expression stayed the same, if so we increment a
+        elif previous_emotion == current_emotion:
+            microexpression_loop_counter += 1
+        # If the micro expression changed back to the original expression it came from then
+        # We have a possible lie and the timestamp is recorded.
+        if emotion_at_start == current_emotion and microexpression_loop_counter == 15:
+            seconds = i / fps
+            minutes = seconds / 60
+            if minutes < 1:
+                minutes = 0
+            timestamps.append('{}:{}'.format(minutes, seconds))
+            microexpression_loop_counter = 0
+            emotion_at_start = ''
+            flag = 0
+            continue
+        # Record current max and previous max for next the analysis of the next ones
+        previous_max = current_max
+        previous_emotion = current_emotion
+
+    return timestamps
+
+
+def cleanup_video():
+    """ Clean up temporary frames and uploaded file
+    """
+    for fl in glob.glob(os.path.join(basedir, 'static', 'data', 'tmp_video', '*')):
+        os.remove(fl)
+
+    for fl in glob.glob(os.path.join('uploads', '*')):
+        os.remove(fl)
+
+
+def cleanup_audio():
+    """ Clean up temporary audio files
+    """
+    for fl in glob.glob(os.path.join(basedir, 'static', 'data', 'tmp_audio', '*')):
+        os.remove(fl)
+
+
+def cleanup_data():
+    """ Clean up temporary stored data
+    """
+    for fl in glob.glob(os.path.join(basedir, 'static', 'data', 'tmp_json', '*')):
+        os.remove(fl)
