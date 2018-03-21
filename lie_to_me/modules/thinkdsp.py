@@ -13,7 +13,7 @@ import random
 import subprocess
 import warnings
 from wave import open as open_wave
-from lie_to_me import thinkplot
+from . import thinkplot
 
 import matplotlib.pyplot as pyplot
 import numpy as np

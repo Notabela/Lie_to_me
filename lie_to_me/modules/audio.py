@@ -1,6 +1,6 @@
 from math import cos, log10, pi
 from numpy import abs
-from lie_to_me import thinkdsp
+from . import thinkdsp
 
 # All the utterances that were collected during tests were
 # sampled at 11 kHz and each sample is represented in 8 bits.

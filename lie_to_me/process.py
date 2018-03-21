@@ -2,14 +2,15 @@ import os
 import glob
 import subprocess
 from flask import abort
-from math import cos, log10,pi
+from math import cos, log10, pi
 from numpy import abs
 import shelve
 import re
 import base64
 from flask import abort
 from flask_socketio import emit
-from lie_to_me import basedir, FFMPEG_PATH, FFPROBE_PATH, app, socketio, thinkdsp, audio
+from lie_to_me import basedir, FFMPEG_PATH, FFPROBE_PATH, app, socketio
+from lie_to_me.modules import thinkdsp, audio
 
 frames_dir = os.path.join(basedir, 'static', 'data', 'tmp_video')
 audio_dir = os.path.join(basedir, 'static', 'data', 'tmp_audio')
@@ -75,7 +76,6 @@ def process_video(filepath):
 
     # Frames are ready - start sending them to for pooling
     # Let's emit a message indicating that we're about to start sending files
-    #with app.test_request_context('/'):
     socketio.emit('canvas_width_height', {'width': width, 'height': height})
 
 
