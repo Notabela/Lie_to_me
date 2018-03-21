@@ -100,17 +100,12 @@ def process_audio(filepath):
         data3 = audio.vowelduration(pitchamp, data2)
         data4 = audio.fundamentalf(pitchperiod, framelength)
 
-        # results.append([data1, data2, data3, data4])
-        print(data1)
-        print(data2)
-        print(data3)
-        print(data4)
+        results.append((data1, data2, data3, data4))
 
-        with shelve.open(os.path.join(json_path, 'audio_data.shlf')) as shelf:
-            shelf['utterance_energy'] = data1
-            shelf['max_pitch_amp'] = data2
-            shelf['vowel_duration'] = data3
-            shelf['fundamental_freq'] = data4
+    with shelve.open(os.path.join(json_path, 'audio_data.shlf')) as shelf:
+        shelf['audio_data'] = results
+
+    cleanup_audio()
 
 
 def cleanup_video():
