@@ -15,26 +15,37 @@ from lie_to_me.modules import thinkdsp, audio
 frames_dir = os.path.join(basedir, 'static', 'data', 'tmp_video')
 audio_dir = os.path.join(basedir, 'static', 'data', 'tmp_audio')
 base64_frames = {}
+video_fps_rate = [-1]  # Video FPS Rate
 
 
 def convert_to_frames(filepath):
     if not os.path.exists(frames_dir):
         os.makedirs(frames_dir)
 
-    output = os.path.join(frames_dir, "thumb%09d.jpg") # output filename
+    output_filename = os.path.join(frames_dir, "thumb%09d.jpg") # output filename
 
     try:
-        ffprobe_command = [ FFPROBE_PATH, '-v', 'error', '-show_entries', 'stream=width,height', '-of', 'default=noprint_wrappers=1', filepath]
-        ffmpeg_command = [ FFMPEG_PATH, '-i', filepath, output, '-hide_banner' ]
-
-        proc = subprocess.Popen(ffprobe_command, stdout=subprocess.PIPE)
-        output = proc.stdout.read().decode('utf-8')
+        # FIND DIMENSION OF VIDEO
+        vid_dimension_cmd = [FFPROBE_PATH, '-v', 'error', '-show_entries', 'stream=width,height', '-of',
+                             'default=noprint_wrappers=1', filepath]
+        proc = subprocess.Popen(vid_dimension_cmd, stdout=subprocess.PIPE)
+        dimension_output = proc.stdout.read().decode('utf-8')
         regex = re.compile(r"[a-z]+=([0-9]+)\n[a-z]+=([0-9]+)\n")
-        width, height = regex.match(output).groups()
+        width, height = regex.match(dimension_output).groups()
 
-        subprocess.call(ffmpeg_command)  # break video to its frames
+        # FIND FPS RATE OF VIDEO
+        fps_rate_cmd = [FFPROBE_PATH, filepath, "-v", "0", "-select_streams", "v", "-print_format", "flat",
+                        "-show_entries", "stream=r_frame_rate"]
+        fps_output = subprocess.check_output(fps_rate_cmd).decode('utf-8')
+        fps_list = fps_output.split('=')[1].strip()[1:-1].split('/')
 
-        return width, height
+        fps_rate = float(fps_list[0]) if len(fps_list) == 1 else float(fps_list[0]) / float(fps_list[1])
+
+        # SPLIT VIDEO TO FRAMES
+        frames_split_cmd = [FFMPEG_PATH, '-i', filepath, output_filename, '-hide_banner']
+        subprocess.call(frames_split_cmd)  # break video to its frames
+
+        return width, height, fps_rate
     except Exception as e:
         print(e)
         return abort(404)
@@ -63,7 +74,9 @@ def process_video(filepath):
     """
         Processes Video Submitted by User 
     """
-    width, height = convert_to_frames(filepath) # convert the video to images
+    global video_fps_rate
+
+    width, height, fps_rate = convert_to_frames(filepath)  # convert the video to images
     ordered_files = sorted(os.listdir(frames_dir), key=lambda x: (int(re.sub(r'\D','',x)),x))
 
     # Convert all frames to base64 images and begin calling
@@ -73,6 +86,8 @@ def process_video(filepath):
             base64_frames[index] = encoded_string.decode('utf-8')
 
     cleanup_video()
+
+    video_fps_rate[0] = fps_rate
 
     # Frames are ready - start sending them to for pooling
     # Let's emit a message indicating that we're about to start sending files
@@ -108,7 +123,7 @@ def process_audio(filepath):
     cleanup_audio()
 
 
-def detect_blinks(eye_closure_list):
+def detect_blinks(eye_closure_list, fps):
     """
         Returns the frames where blinks occured
     """
@@ -117,7 +132,7 @@ def detect_blinks(eye_closure_list):
     counter = 0
 
     # Array of frames where blink occured
-    blink_frames = []
+    blink_timestamps = []
 
     for frame_number, eye_thresh in enumerate(eye_closure_list):
         if eye_thresh is None:
@@ -126,10 +141,14 @@ def detect_blinks(eye_closure_list):
             counter += 1
         else:
             if counter >= eye_cl_consec_frames:
-                blink_frames.append(frame_number)
+                seconds = frame_number / fps
+                minutes = seconds / 60
+                if minutes < 1:
+                    minutes = 0
+                blink_timestamps.append('{}:{}'.format(minutes, seconds))
             counter = 0
 
-    return blink_frames
+    return blink_timestamps
 
 
 def microexpression_analyzer(emotions, fps):
@@ -150,18 +169,17 @@ def microexpression_analyzer(emotions, fps):
     flag = 0
     previous_emotion = ''
     emotion_at_start = ''
-    list_of_emotions = ['anger', 'contempt', 'disgust', 'fear', 'happiness', 'joy', 'sadness', 'surprise']
+    list_of_emotions = ['anger', 'contempt', 'disgust', 'fear', 'joy', 'sadness', 'surprise']
     timestamps = []
 
     for i in range(len(emotions)):
         # Store current max of emotions
-        if not emotions:
+        if not emotions[i]:
             continue
 
         current_max = max(emotions[i]['anger'],
                           emotions[i]['contempt'],
                           emotions[i]['disgust'],
-                          emotions[i]['happiness'],
                           emotions[i]['joy'],
                           emotions[i]['sadness'],
                           emotions[i]['surprise'])
