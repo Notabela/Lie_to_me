@@ -56,5 +56,6 @@ def analysis():
         blink_data = None
         audio_data = None
 
+    print(blink_data)
     return render_template('analysis.html', audio_data=audio_data, blink_data=blink_data,
                            microexpression_data=microexpression_data, emotion_data=emotion_data)

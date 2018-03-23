@@ -15,14 +15,17 @@ from lie_to_me.modules import thinkdsp, audio
 frames_dir = os.path.join(basedir, 'static', 'data', 'tmp_video')
 audio_dir = os.path.join(basedir, 'static', 'data', 'tmp_audio')
 base64_frames = {}
+capture_fps = 20  # By default capture 20 frames per second
 video_fps_rate = [-1]  # Video FPS Rate
 
 
 def convert_to_frames(filepath):
+    global capture_fps
+
     if not os.path.exists(frames_dir):
         os.makedirs(frames_dir)
 
-    output_filename = os.path.join(frames_dir, "thumb%09d.jpg") # output filename
+    output_filename = os.path.join(frames_dir, "thumb%09d.jpg")  # output filename
 
     try:
         # FIND DIMENSION OF VIDEO
@@ -42,10 +45,11 @@ def convert_to_frames(filepath):
         fps_rate = float(fps_list[0]) if len(fps_list) == 1 else float(fps_list[0]) / float(fps_list[1])
 
         # SPLIT VIDEO TO FRAMES
-        frames_split_cmd = [FFMPEG_PATH, '-i', filepath, output_filename, '-hide_banner']
+        capture_fps = min(capture_fps, int(fps_rate))  # ensure fps rate isn't exceeded
+        frames_split_cmd = [FFMPEG_PATH, '-i', filepath, '-r', str(capture_fps), output_filename, '-hide_banner']
         subprocess.call(frames_split_cmd)  # break video to its frames
 
-        return width, height, fps_rate
+        return width, height, capture_fps
     except Exception as e:
         print(e)
         return abort(404)
@@ -127,8 +131,8 @@ def detect_blinks(eye_closure_list, fps):
     """
         Returns the frames where blinks occured
     """
-    eye_cl_thresh = 70          # eye closure >= 70 to be considered closed
-    eye_cl_consec_frames = 4    # 4 or more consecutive frames to be considered a blink
+    eye_cl_thresh = 60          # eye closure >= 60 to be considered closed
+    eye_cl_consec_frames = 2    # 4 or more consecutive frames to be considered a blink
     counter = 0
 
     # Array of frames where blink occured
@@ -145,7 +149,7 @@ def detect_blinks(eye_closure_list, fps):
                 minutes = seconds / 60
                 if minutes < 1:
                     minutes = 0
-                blink_timestamps.append('{}:{}'.format(minutes, seconds))
+                blink_timestamps.append((minutes, seconds))
             counter = 0
 
     return blink_timestamps
@@ -211,7 +215,7 @@ def microexpression_analyzer(emotions, fps):
             minutes = seconds / 60
             if minutes < 1:
                 minutes = 0
-            timestamps.append('{}:{}'.format(minutes, seconds))
+            timestamps.append((minutes, seconds))
             microexpression_loop_counter = 0
             emotion_at_start = ''
             flag = 0

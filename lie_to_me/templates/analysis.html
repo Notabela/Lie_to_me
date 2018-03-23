@@ -38,47 +38,42 @@ let blinkCtx = document.getElementById("blinkChart").getContext('2d');
 let audioCtx = document.getElementById("audioChart").getContext('2d');
 let emotionCtx = document.getElementById("emotionChart").getContext('2d');
 
-console.log(String({{ audio_data | string }}));
-console.log(String({{ blink_data | string }}));
-console.log(String({{ microexpression_data | string }}));
+let blink_graph_data = {{ blink_data|tojson }};
+console.log(blink_graph_data)
+//let blink_graph_data = [];
+//{% for time in blink_data %}
+ //   blink_graph_data.push()
+ //   console.log({{  time }});
+//{% endfor %}
 
-let blinkChart = new Chart(blinkCtx, {
-    type: 'bar',
+var blinkChart = new Chart(blinkCtx, {
+    type: 'scatter',
     data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
         datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
+            label: 'Blinks',
+            labelColor: 'rgba(100, 123, 211, 1)',
+            data: [{x: 3, y: 1}, {x: 5, y: 1}, {x: 6, y: 1}],
+            pointBackgroundColor: 'rgba(100, 123, 211, 1)',
+            pointRadius: 10
+        },
+        {
+            label: 'Micro Expressions',
+            data: [{x: 9, y: 2}, {x: 4, y: 2}, {x: 8, y: 2}],
+            pointBackgroundColor: 'rgba(200, 123, 111, 1)',
+            pointRadius: 10
+        }
+        ]
     },
     options: {
         scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
+            xAxes: [{
+                type: 'linear',
+                position: 'bottom'
             }]
         }
     }
-
 });
+
 
 let audioChart = new Chart(audioCtx, {
     type: 'bar',
