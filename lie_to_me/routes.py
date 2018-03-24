@@ -1,6 +1,8 @@
 """ Routes of Flask Web Application """
 import os
 import threading
+import shelve
+from pathlib import Path
 from flask import render_template, request, jsonify
 from lie_to_me import app, video, basedir
 from lie_to_me.process import process_video, process_audio
@@ -32,5 +34,34 @@ def analysis():
         View Final Analysis of Uploaded Video
     :return:
     """
+    json_path = os.path.join(basedir, 'static', 'data', 'tmp_json')
 
-    return render_template('analysis.html')
+    audio_file = Path(os.path.join(json_path, 'audio_data.shlf.db'))
+    video_file = Path(os.path.join(json_path, 'facial_data.shlf.db'))
+
+    # Files exists
+    if audio_file.is_file() and video_file.is_file():
+        print('')
+        with shelve.open(os.path.join(json_path, 'facial_data.shlf')) as shelf:
+            emotion_data = shelf['emotion_data']
+            microexpression_data = shelf['micro_expression_data']
+            blink_data = shelf['blink_data']
+
+        with shelve.open(os.path.join(json_path, 'audio_data.shlf')) as shelf:
+            mean_energy = shelf['mean_energy']
+            max_pitch_amp = shelf['max_pitch_amp']
+            vowel_duration = shelf['vowel_duration']
+            pitch_contour = shelf['pitch_contour']
+
+    else:
+        emotion_data = None
+        microexpression_data = None
+        blink_data = None
+        mean_energy = None
+        max_pitch_amp = None
+        vowel_duration = None
+        pitch_contour = None
+
+    return render_template('analysis.html', mean_energy=mean_energy, max_pitch_amp=max_pitch_amp,
+                           vowel_duration=vowel_duration, pitch_contour=pitch_contour, blink_data=blink_data,
+                           microexpression_data=microexpression_data, emotion_data=emotion_data)

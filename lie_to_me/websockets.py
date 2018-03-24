@@ -6,7 +6,7 @@ import shelve
 from flask_socketio import emit, disconnect
 from flask import request
 from lie_to_me import socketio, basedir, os
-from lie_to_me.process import base64_frames, detect_blinks
+from lie_to_me.process import base64_frames, detect_blinks, video_fps_rate, microexpression_analyzer
 
 # keeps track of frame being sent (0 to len(base64_frames))
 # stored as a list to allow for referencing
@@ -41,10 +41,10 @@ def handle_ready_receive(json):
 
     if current_frame[0] < len(base64_frames):
         emit('next_frame', [current_frame[0], base64_frames[current_frame[0]]])
-        current_frame[0] += 1   
+        current_frame[0] += 1
 
 
-# Affectiva Client is requesting the next frame and submitting the 
+# Affectiva Client is requesting the next frame and submitting the
 # emotion data of the previous frame in format json
 @socketio.on('next_frame')
 def handle_next_frame_request(json):
@@ -73,12 +73,11 @@ def handle_next_frame_request(json):
         disconnect()
 
         # Parse Data and Save Data to Disk
-        blink_data = detect_blinks(eye_closure_data)
-
+        blink_data = detect_blinks(eye_closure_data, video_fps_rate[0])
+        microexpression_data = microexpression_analyzer(emotion_data, video_fps_rate[0])
         json_path = os.path.join(basedir, 'static', 'data', 'tmp_json')
 
         with shelve.open(os.path.join(json_path, 'facial_data.shlf')) as shelf:
             shelf['emotion_data'] = emotion_data
+            shelf['micro_expression_data'] = microexpression_data
             shelf['blink_data'] = blink_data
-
-
