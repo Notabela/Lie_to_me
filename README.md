@@ -26,7 +26,7 @@ The following browsers are supported on desktop platforms:
 change FFMPEG_PATH and FFPROBE_PATH in file `__init__.py` to your FFMPEG install location
 ```python
 10. FFMPEG_PATH  = '/usr/local/bin/ffmpeg' 
-11. FFPROBE_PATH = '/usr/local/bin/ffprobe
+11. FFPROBE_PATH = '/usr/local/bin/ffprobe'
 ```
  
 
