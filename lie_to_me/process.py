@@ -2,15 +2,13 @@ import os
 import glob
 import subprocess
 from flask import abort
-from math import cos, log10, pi
-from numpy import abs
 import shelve
 import re
 import base64
 from flask import abort
 from flask_socketio import emit
 from lie_to_me import basedir, FFMPEG_PATH, FFPROBE_PATH, app, socketio
-from lie_to_me.modules import thinkdsp, audio
+from lie_to_me.modules import audio
 
 frames_dir = os.path.join(basedir, 'static', 'data', 'tmp_video')
 audio_dir = os.path.join(basedir, 'static', 'data', 'tmp_audio')
@@ -63,7 +61,7 @@ def convert_audio(filepath):
 
     try:
         ffmpeg_command = [FFMPEG_PATH, '-i', filepath, '-ar', '11000', '-ac', '2',
-                          '-f', 'segment', '-segment_time', '-2', output]
+                          '-f', 'segment', '-segment_time', '2', output]
         subprocess.call(ffmpeg_command)  # convert video into wave file
 
         files = [(audio_dir + '/' + f) for f in os.listdir(audio_dir)]
