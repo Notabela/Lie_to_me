@@ -102,7 +102,11 @@ def process_audio(filepath):
     """ Process Audio component of Video
     """
     json_path = os.path.join(basedir, 'static', 'data', 'tmp_json')
-    results = []
+    mean_energy = []
+    max_pitch_amp = []
+    vowel_duration = []
+    pitch_contour = []
+
     output = convert_audio(filepath)
 
     for files in output:
@@ -119,10 +123,16 @@ def process_audio(filepath):
         data3 = audio.vowelduration(pitchamp, data2)
         data4 = audio.fundamentalf(pitchperiod, framelength)
 
-        results.append((data1, data2, data3, data4))
+        mean_energy.append(data1)
+        max_pitch_amp.append(data2)
+        vowel_duration.append(data3)
+        pitch_contour.append(data4)
 
     with shelve.open(os.path.join(json_path, 'audio_data.shlf')) as shelf:
-        shelf['audio_data'] = results
+        shelf['mean_energy'] = mean_energy
+        shelf['max_pitch_amp'] = max_pitch_amp
+        shelf['vowel_duration'] = vowel_duration
+        shelf['pitch_contour'] = pitch_contour
 
     cleanup_audio()
 
@@ -131,8 +141,8 @@ def detect_blinks(eye_closure_list, fps):
     """
         Returns the frames where blinks occured
     """
-    eye_cl_thresh = 60          # eye closure >= 60 to be considered closed
-    eye_cl_consec_frames = 2    # 4 or more consecutive frames to be considered a blink
+    eye_cl_thresh = 50          # eye closure >= 60 to be considered closed
+    eye_cl_consec_frames = 1    # 4 or more consecutive frames to be considered a blink
     counter = 0
 
     # Array of frames where blink occured

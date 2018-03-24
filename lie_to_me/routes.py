@@ -48,14 +48,20 @@ def analysis():
             blink_data = shelf['blink_data']
 
         with shelve.open(os.path.join(json_path, 'audio_data.shlf')) as shelf:
-            audio_data = shelf['audio_data']
+            mean_energy = shelf['mean_energy']
+            max_pitch_amp = shelf['max_pitch_amp']
+            vowel_duration = shelf['vowel_duration']
+            pitch_contour = shelf['pitch_contour']
 
     else:
         emotion_data = None
         microexpression_data = None
         blink_data = None
-        audio_data = None
+        mean_energy = None
+        max_pitch_amp = None
+        vowel_duration = None
+        pitch_contour = None
 
-    print(blink_data)
-    return render_template('analysis.html', audio_data=audio_data, blink_data=blink_data,
+    return render_template('analysis.html', mean_energy=mean_energy, max_pitch_amp=max_pitch_amp,
+                           vowel_duration=vowel_duration, pitch_contour=pitch_contour, blink_data=blink_data,
                            microexpression_data=microexpression_data, emotion_data=emotion_data)

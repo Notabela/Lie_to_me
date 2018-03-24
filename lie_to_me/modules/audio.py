@@ -28,11 +28,11 @@ def split(input_file):
     framelength = samples_per_frame / framerate
     numframes = int(length / framelength)
 
-    print('Framelength:', framelength, 'seconds')
-    print('Frames to calcuate:', numframes)
+    # print('Framelength:', framelength, 'seconds')
+    # print('Frames to calcuate:', numframes)
 
     for index in range(numframes):
-        print(index)
+        # print(index)
         currentstart = index * framelength
         frames.append(wave.segment(start=currentstart, duration=framelength))
 
