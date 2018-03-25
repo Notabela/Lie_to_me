@@ -33,6 +33,12 @@ def handle_message_receival(json):
     print('Received: {0}'.format(str(json)))
 
 
+# Client Requesting to Disconnect
+@socketio.on('client_request_disconnect')
+def handle_client_disconnect(msg):
+    disconnect()
+
+
 # Affectiva Client ready to receive photos (base64_images)
 @socketio.on('ready_receive')
 def handle_ready_receive(json):
@@ -70,7 +76,7 @@ def handle_next_frame_request(json):
         current_frame[0] += 1
     else:
         emit('no_more_frames', 'Completed')
-        disconnect()
+        # disconnect()
 
         # Parse Data and Save Data to Disk
         blink_data = detect_blinks(eye_closure_data, video_fps_rate[0])
@@ -81,3 +87,6 @@ def handle_next_frame_request(json):
             shelf['emotion_data'] = emotion_data
             shelf['micro_expression_data'] = microexpression_data
             shelf['blink_data'] = blink_data
+
+        # Notify client that facial data write is complete
+        emit('data_complete', 'Facial_Complete')

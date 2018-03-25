@@ -132,6 +132,7 @@ def process_audio(filepath):
         shelf['vowel_duration'] = vowel_duration
         shelf['pitch_contour'] = pitch_contour
 
+    socketio.emit('data_complete', 'Audio_Complete')
     cleanup_audio()
 
 

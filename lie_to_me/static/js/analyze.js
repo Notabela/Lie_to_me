@@ -60,7 +60,7 @@ function upload_video_file()
           return xhr;
         },
         success: function (data) {
-            console.log('Successfully uploaded')
+            console.log('Successfully uploaded');
 
             // Setup funny loading messages and show loading view
             $(".dim_overlay").css('display', 'block');
@@ -78,7 +78,7 @@ function upload_video_file()
             socket.on('connect', () => {
                 // we emit a connected message to let the client know that we are connected
                 console.log("Connected to Server")
-              })
+            })
 
 
             // Setup listeners in affectiva.js

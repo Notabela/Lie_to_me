@@ -9,11 +9,11 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Path to FFMPEG/FFPROBE - set this to FFMPEG PATH in Windows/Mac
 if os.name == 'nt':
-    FFMPEG_PATH = basedir + '\\apps\\ffmpeg.exe'
-    FFPROBE_PATH = basedir + '\\apps\\ffmpeg.exe'
+    FFMPEG_PATH = os.path.join(basedir, 'apps', 'ffmpeg.exe')
+    FFPROBE_PATH = os.path.join(basedir, 'apps', 'ffprobe.exe')
 else:
-    FFMPEG_PATH = basedir + '/apps/ffmpeg'
-    FFPROBE_PATH = basedir + '/apps/ffprobe'
+    FFMPEG_PATH = os.path.join(basedir, 'apps', 'ffmpeg')
+    FFPROBE_PATH = os.path.join(basedir, 'apps', 'ffprobe')
 
 jsglue = JSGlue()
 video = UploadSet('videos', AllExcept(SCRIPTS + EXECUTABLES))
