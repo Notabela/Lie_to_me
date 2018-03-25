@@ -9,7 +9,7 @@ Lie detection using facial and voice recognition
 
 ### Required Modules
 The Backend requires the following modules:
-- [FFMPEG](http://ffmpeg.org/)
+- [FFMPEG](http://ffmpeg.org/) : `Bundled with webapp (binaries located at lie_to_me\apps)`
 
 #### Supported browsers
 The following browsers are supported on desktop platforms:
@@ -19,17 +19,15 @@ The following browsers are supported on desktop platforms:
 - Opera 37
 - Edge 10586
 
+#### Supported Systems
+
+- Mac OS
+- Windows
+
 
 
 
 ## Installation
-change FFMPEG_PATH and FFPROBE_PATH in file `__init__.py` to your FFMPEG install location
-```python
-10. FFMPEG_PATH  = '/usr/local/bin/ffmpeg' 
-11. FFPROBE_PATH = '/usr/local/bin/ffprobe'
-```
- 
-
 `ON COMMAND LINE`
 ```bash
 pip install -r requirements.txt
