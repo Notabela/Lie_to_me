@@ -1,6 +1,7 @@
 import os
 import glob
 import subprocess
+import math
 from flask import abort
 import shelve
 import re
@@ -74,7 +75,7 @@ def convert_audio(filepath):
 
 def process_video(filepath):
     """
-        Processes Video Submitted by User 
+        Processes Video Submitted by User
     """
     global video_fps_rate
 
@@ -184,6 +185,7 @@ def microexpression_analyzer(emotions, fps):
     emotion_at_start = ''
     list_of_emotions = ['anger', 'contempt', 'disgust', 'fear', 'joy', 'sadness', 'surprise']
     timestamps = []
+    seconds_timestamps = []
 
     for i in range(len(emotions)):
         # Store current max of emotions
@@ -225,6 +227,7 @@ def microexpression_analyzer(emotions, fps):
             if minutes < 1:
                 minutes = 0
             timestamps.append((minutes, seconds))
+            seconds_timestamps.append(seconds)
             microexpression_loop_counter = 0
             emotion_at_start = ''
             flag = 0
@@ -233,7 +236,22 @@ def microexpression_analyzer(emotions, fps):
         previous_max = current_max
         previous_emotion = current_emotion
 
-    return timestamps
+    time_array = [0]*(math.ceil(total_seconds/2))
+    total_seconds = num_of_frames / fps
+    for i in range(len(timestamps)):
+        start_seconds = 0
+        end_seconds = 120
+        count = 0
+        for j in range((math.ceil(total_seconds/2))):
+            if timestamps[i] > start_seconds and timestamps[i] <= end_seconds:
+                time_array[count] += 1
+                break
+            else:
+                ++count
+                start_seconds += 120
+                end_seconds += 120
+
+    return time_array
 
 
 def cleanup_video():
