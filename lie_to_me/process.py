@@ -140,26 +140,48 @@ def detect_blinks(eye_closure_list, fps):
     """
         Returns the frames where blinks occured
     """
-    eye_cl_thresh = 50          # eye closure >= 60 to be considered closed
-    eye_cl_consec_frames = 1    # 4 or more consecutive frames to be considered a blink
+    fps = 3
+    eye_cl_thresh = 50  # eye closure >= 50 to be considered closed
+    eye_cl_consec_frames = 1  # 1 or more consecutive frames to be considered a blink
     counter = 0
 
     # Array of frames where blink occured
     blink_timestamps = []
 
+    # Instantaneous blink rate (blink rate after every 2 secs)
+    # blink rate = total number of blinks / time (in minutes) = blinks/minute
+    total_blinks = 0
+    elapsed_seconds = 0
+    two_sec_save = 0
+    two_sec_tracker = 0
+
     for frame_number, eye_thresh in enumerate(eye_closure_list):
         if eye_thresh is None:
-            continue
+            pass
         elif eye_thresh > eye_cl_thresh:
             counter += 1
         else:
             if counter >= eye_cl_consec_frames:
-                seconds = frame_number / fps
-                minutes = seconds / 60
-                if minutes < 1:
-                    minutes = 0
-                blink_timestamps.append((minutes, seconds))
+                total_blinks += 1
+                # seconds = frame_number / fps
+                # minutes = seconds / 60
+                # if minutes < 1:
+                #     minutes = 0
+                # blink_timestamps.append((minutes, seconds))
             counter = 0
+
+        # convert processed frames to number of minutes
+        elapsed_seconds = ((frame_number+1) / fps)
+
+        # tracker to see if two secs have passed since blink rate was last captured
+        two_sec_tracker = elapsed_seconds - two_sec_save
+
+        # Goal is to capture blink rate every two seconds
+        if two_sec_tracker >= 2:
+            two_sec_save += two_sec_tracker
+            two_sec_tracker = 0
+            blink_rate = total_blinks / (elapsed_seconds / 60)  # in blinks per minute
+            blink_timestamps.append(blink_rate)
 
     return blink_timestamps
 
