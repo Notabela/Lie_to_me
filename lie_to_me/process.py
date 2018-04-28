@@ -140,7 +140,6 @@ def detect_blinks(eye_closure_list, fps):
     """
         Returns the frames where blinks occured
     """
-    fps = 3
     eye_cl_thresh = 50  # eye closure >= 50 to be considered closed
     eye_cl_consec_frames = 1  # 1 or more consecutive frames to be considered a blink
     counter = 0
@@ -180,7 +179,7 @@ def detect_blinks(eye_closure_list, fps):
         if two_sec_tracker >= 2:
             two_sec_save += two_sec_tracker
             two_sec_tracker = 0
-            blink_rate = total_blinks / (elapsed_seconds / 60)  # in blinks per minute
+            blink_rate = total_blinks / elapsed_seconds  # in blinks per second
             blink_timestamps.append(blink_rate)
 
     return blink_timestamps
