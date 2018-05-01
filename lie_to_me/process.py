@@ -247,7 +247,7 @@ def microexpression_analyzer(emotions, fps):
                 time_array[count] += 1
                 break
             else:
-                ++count
+                count += 1
                 start_seconds += 120
                 end_seconds += 120
 
