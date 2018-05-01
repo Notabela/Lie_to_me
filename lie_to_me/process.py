@@ -236,14 +236,14 @@ def microexpression_analyzer(emotions, fps):
         previous_max = current_max
         previous_emotion = current_emotion
 
+    total_seconds = len(emotions) / fps
     time_array = [0]*(math.ceil(total_seconds/2))
-    total_seconds = num_of_frames / fps
     for i in range(len(timestamps)):
         start_seconds = 0
         end_seconds = 120
         count = 0
         for j in range((math.ceil(total_seconds/2))):
-            if timestamps[i] > start_seconds and timestamps[i] <= end_seconds:
+            if timestamps[i][1] > start_seconds and timestamps[i][1] <= end_seconds:
                 time_array[count] += 1
                 break
             else:
