@@ -67,8 +67,9 @@ let pitch_contour = {{ pitch_contour|tojson }};
 // Convert JSON Data to ChartJS Scatter plot readable version
 // data = [{x: value, y: value}, ...]
 let micro_expression_graph_data = [];
-for (let tuple of micro_expression) {
-    micro_expression_graph_data.push({x: tuple[0] + tuple[1]/60, y: 1});
+let seconds = 0;
+for (let value of micro_expression) {
+    micro_expression_graph_data.push({x: seconds/60.0, y: value});
 }
 
 let blink_graph_data = [];
