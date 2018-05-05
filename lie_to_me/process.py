@@ -1,12 +1,12 @@
-import os
+import base64
+import csv
+from flask import abort
 import glob
+import os
 import subprocess
 import math
-from flask import abort
 import shelve
 import re
-import base64
-from flask import abort
 from flask_socketio import emit
 from lie_to_me import basedir, FFMPEG_PATH, FFPROBE_PATH, app, socketio
 from lie_to_me.modules import audio
@@ -101,6 +101,7 @@ def process_audio(filepath):
     """ Process Audio component of Video
     """
     json_path = os.path.join(basedir, 'static', 'data', 'tmp_json')
+    csv_path = os.path.join(basedir, 'static', 'data', 'csv')
     mean_energy = []
     max_pitch_amp = []
     vowel_duration = []
@@ -126,6 +127,15 @@ def process_audio(filepath):
         max_pitch_amp.append(data2)
         vowel_duration.append(data3)
         pitch_contour.append(data4)
+
+
+    # with open(csv_path + 'audio.csv', 'w', newline='') as csvfile:
+    #     writer = csv.writer(csvfile)
+    #     writer.writerow(['Time Interval', 'Mean Energy', 'Max Pitch Amplitude',
+    #                      'Vowel Duration', 'Fundamental Frequency'])
+    #     for index in range(len(mean_energy)):
+    #         writer.writerow([index, mean_energy[index], max_pitch_amp[index],
+    #                          vowel_duration[index], pitch_contour[index]])
 
     with shelve.open(os.path.join(json_path, 'audio_data.shlf')) as shelf:
         shelf['mean_energy'] = mean_energy
