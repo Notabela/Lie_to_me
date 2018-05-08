@@ -39,7 +39,10 @@ def analysis():
 
     audio_file = Path(os.path.join(json_path, 'audio_data.shlf.db'))
     video_file = Path(os.path.join(json_path, 'facial_data.shlf.db'))
-    csv_path = Path(os.path.join(basedir, 'static', 'data', 'csv'))
+    csv_path = os.path.join(basedir, 'static', 'data', 'csv')
+
+    if not os.path.exists(csv_path):
+        os.mkdir(csv_path)
 
     # Files exists
     if audio_file.is_file() and video_file.is_file():
@@ -55,21 +58,13 @@ def analysis():
             pitch_contour = shelf['pitch_contour']
 
     else:
-        print(audio_file.is_file(), video_file.is_file())
         emotion_data = None
-        print("no emotions")
         microexpression_data = None
-        print("no microexpressions")
         blink_data = None
-        print("no blinks")
         mean_energy = None
-        print("no mean energy")
         max_pitch_amp = None
-        print("no max pitch")
         vowel_duration = None
-        print("no vowel duration")
         pitch_contour = None
-        print("no pitch countour")
 
     # All output values should be available here:
 
