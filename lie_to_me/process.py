@@ -13,6 +13,7 @@ from lie_to_me.modules import audio
 
 frames_dir = os.path.join(basedir, 'static', 'data', 'tmp_video')
 audio_dir = os.path.join(basedir, 'static', 'data', 'tmp_audio')
+json_path = os.path.join(basedir, 'static', 'data', 'tmp_json')
 base64_frames = {}
 capture_fps = 20  # By default capture 20 frames per second
 video_fps_rate = [-1]  # Video FPS Rate
@@ -23,6 +24,9 @@ def convert_to_frames(filepath):
 
     if not os.path.exists(frames_dir):
         os.makedirs(frames_dir)
+
+    if not os.path.exists(json_path):
+        os.makedirs(json_path)
 
     output_filename = os.path.join(frames_dir, "thumb%09d.jpg")  # output filename
 
@@ -100,7 +104,6 @@ def process_video(filepath):
 def process_audio(filepath):
     """ Process Audio component of Video
     """
-    json_path = os.path.join(basedir, 'static', 'data', 'tmp_json')
     mean_energy = []
     max_pitch_amp = []
     vowel_duration = []
@@ -264,7 +267,7 @@ def microexpression_analyzer(emotions, fps):
         end_seconds = 120
         count = 0
         for j in range((math.ceil(total_seconds/2))):
-            if timestamps[i][1] > start_seconds and timestamps[i][1] <= end_seconds:
+            if start_seconds < timestamps[i][1] <= end_seconds:
                 time_array[count] += 1
                 break
             else:

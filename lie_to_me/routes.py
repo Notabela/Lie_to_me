@@ -1,5 +1,6 @@
 """ Routes of Flask Web Application """
 import os
+import csv
 import threading
 import shelve
 from pathlib import Path
@@ -38,10 +39,10 @@ def analysis():
 
     audio_file = Path(os.path.join(json_path, 'audio_data.shlf.db'))
     video_file = Path(os.path.join(json_path, 'facial_data.shlf.db'))
+    csv_path = Path(os.path.join(basedir, 'static', 'data', 'csv'))
 
     # Files exists
     if audio_file.is_file() and video_file.is_file():
-        print('')
         with shelve.open(os.path.join(json_path, 'facial_data.shlf')) as shelf:
             emotion_data = shelf['emotion_data']
             microexpression_data = shelf['micro_expression_data']
@@ -54,22 +55,31 @@ def analysis():
             pitch_contour = shelf['pitch_contour']
 
     else:
+        print(audio_file.is_file(), video_file.is_file())
         emotion_data = None
+        print("no emotions")
         microexpression_data = None
+        print("no microexpressions")
         blink_data = None
+        print("no blinks")
         mean_energy = None
+        print("no mean energy")
         max_pitch_amp = None
+        print("no max pitch")
         vowel_duration = None
+        print("no vowel duration")
         pitch_contour = None
+        print("no pitch countour")
 
     # All output values should be available here:
-    emotion_data
-    microexpression_data
-    blink_data
-    mean_energy
-    max_pitch_amp
-    vowel_duration
-    pitch_contour
+
+    with open(Path(os.path.join(csv_path, 'train.csv')), 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['Time Interval', 'Emotion Data', 'Micro-expressions', 'Blinks',
+                         'Mean Energy', 'Max Pitch Amplitude', 'Vowel Duration', 'Fundamental Frequency'])
+        for index in range(len(mean_energy)):
+            writer.writerow([index, emotion_data[index], microexpression_data[index], blink_data[index],
+                             mean_energy[index], max_pitch_amp[index], vowel_duration[index], pitch_contour[index]])
 
     return render_template('analysis.html', mean_energy=mean_energy, max_pitch_amp=max_pitch_amp,
                            vowel_duration=vowel_duration, pitch_contour=pitch_contour, blink_data=blink_data,
