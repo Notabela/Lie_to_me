@@ -113,7 +113,8 @@ def inverse_fourier(fourierarray):
     for frame in fourierarray:
         framearray.append([])
         for samplenumber in range(len(frame.hs)):
-            frame.hs[samplenumber] = 20 * log10(abs(frame.hs[samplenumber]))
+            if frame.hs[samplenumber] != 0:
+                frame.hs[samplenumber] = 20 * log10(abs(frame.hs[samplenumber]))
 
     # ifft back
     for framenumber in range(len(framearray)):
