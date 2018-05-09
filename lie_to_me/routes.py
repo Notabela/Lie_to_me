@@ -1,5 +1,6 @@
 """ Routes of Flask Web Application """
 import os
+import csv
 import threading
 import shelve
 from pathlib import Path
@@ -38,10 +39,13 @@ def analysis():
 
     audio_file = Path(os.path.join(json_path, 'audio_data.shlf.db'))
     video_file = Path(os.path.join(json_path, 'facial_data.shlf.db'))
+    csv_path = os.path.join(basedir, 'static', 'data', 'csv')
+
+    if not os.path.exists(csv_path):
+        os.mkdir(csv_path)
 
     # Files exists
     if audio_file.is_file() and video_file.is_file():
-        print('')
         with shelve.open(os.path.join(json_path, 'facial_data.shlf')) as shelf:
             emotion_data = shelf['emotion_data']
             microexpression_data = shelf['micro_expression_data']
@@ -63,14 +67,14 @@ def analysis():
         pitch_contour = None
 
     # All output values should be available here:
-    microexpression_data
-    blink_data
-    mean_energy
-    max_pitch_amp
-    vowel_duration
-    pitch_contour
 
-
+    with open(Path(os.path.join(csv_path, 'train.csv')), 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['Time Interval', 'Emotion Data', 'Micro-expressions', 'Blinks',
+                         'Mean Energy', 'Max Pitch Amplitude', 'Vowel Duration', 'Fundamental Frequency'])
+        for index in range(len(mean_energy)):
+            writer.writerow([index, emotion_data[index], microexpression_data[index], blink_data[index],
+                             mean_energy[index], max_pitch_amp[index], vowel_duration[index], pitch_contour[index]])
 
 
     return render_template('analysis.html', mean_energy=mean_energy, max_pitch_amp=max_pitch_amp,
