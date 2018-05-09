@@ -63,13 +63,15 @@ def analysis():
         pitch_contour = None
 
     # All output values should be available here:
-    emotion_data
     microexpression_data
     blink_data
     mean_energy
     max_pitch_amp
     vowel_duration
     pitch_contour
+
+
+
 
     return render_template('analysis.html', mean_energy=mean_energy, max_pitch_amp=max_pitch_amp,
                            vowel_duration=vowel_duration, pitch_contour=pitch_contour, blink_data=blink_data,

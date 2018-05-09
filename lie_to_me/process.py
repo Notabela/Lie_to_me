@@ -128,7 +128,6 @@ def process_audio(filepath):
         vowel_duration.append(data3)
         pitch_contour.append(data4)
 
-
     # with open(csv_path + 'audio.csv', 'w', newline='') as csvfile:
     #     writer = csv.writer(csvfile)
     #     writer.writerow(['Time Interval', 'Mean Energy', 'Max Pitch Amplitude',
