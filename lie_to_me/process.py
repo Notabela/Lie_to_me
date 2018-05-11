@@ -280,6 +280,23 @@ def microexpression_analyzer(emotions, fps):
 
     return time_array
 
+def train_lie_model(csv_file):
+
+    if not os.path.exists('lie_model.pkl'):
+        SVM = svm.SVC()
+        SVM.fit(X, Y)
+        print('Model Trained')
+        joblib.dump(SVM, 'lie_model.pkl')
+    else:
+        os.remove('lie_model.pkl')
+        SVM = svm.SVC()
+        SVM.fit(X, Y)
+        print('Model Trained')
+        joblib.dump(SVM, 'lie_model.pkl')
+
+def predict(vector):
+    SVM = joblib.load('lie_model.pkl')
+    return SVM.predict(vector)
 
 def cleanup_uploads():
     """Clean up uploaded videos"""

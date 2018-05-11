@@ -78,29 +78,29 @@ def analysis():
         vowel_duration = None
         pitch_contour = None
 
-    # traindata = []
-    #
-    # for i in range(len(blink_data)):
-    #     traindata.append(0)
-    # trainfile = open(txt_file)
-    # for line in trainfile:
-    #     index1 = int((int(line[4]) * 600) + ((int(line[5]) * 60) + (int(line[7]) * 10) + int(line[8])) / 2)
-    #     index2 = int((int(line[10]) * 600) + ((int(line[11]) * 60) + (int(line[13]) * 10) + int(line[14])) / 2)
-    #     if line[0] == 'F':
-    #         traindata[index1] = 1
-    #         traindata[index2] = 1
+    traindata = []
+
+    for i in range(len(blink_data)):
+        traindata.append(0)
+    trainfile = open(txt_file)
+    for line in trainfile:
+        index1 = int((int(line[4]) * 600) + ((int(line[5]) * 60) + (int(line[7]) * 10) + int(line[8])) / 2)
+        index2 = int((int(line[10]) * 600) + ((int(line[11]) * 60) + (int(line[13]) * 10) + int(line[14])) / 2)
+        if line[0] == 'F':
+            traindata[index1] = 1
+            traindata[index2] = 1
 
     # All output values should be available here:
 
-    # with open(Path(os.path.join(csv_path, 'train.csv')), 'w', newline='') as csvfile:
-    #     writer = csv.writer(csvfile)
-    #     writer.writerow(['Time Interval', 'Emotion Data', 'Micro-expressions', 'Blinks',
-    #                      'Mean Energy', 'Max Pitch Amplitude', 'Vowel Duration', 'Fundamental Frequency',
-    #                      'False/True'])
-    #     for index in range(len(mean_energy)):
-    #         writer.writerow([index, emotion_data[index], microexpression_data[index], blink_data[index],
-    #                          mean_energy[index], max_pitch_amp[index], vowel_duration[index], pitch_contour[index],
-    #                          traindata[index]])
+    with open(Path(os.path.join(csv_path, 'train.csv')), 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['Time Interval', 'Emotion Data', 'Micro-expressions', 'Blinks',
+                         'Mean Energy', 'Max Pitch Amplitude', 'Vowel Duration', 'Fundamental Frequency',
+                         'False/True'])
+        for index in range(len(mean_energy)):
+            writer.writerow([index, emotion_data[index], microexpression_data[index], blink_data[index],
+                             mean_energy[index], max_pitch_amp[index], vowel_duration[index], pitch_contour[index],
+                             traindata[index]])
 
     return render_template('analysis.html', mean_energy=mean_energy, max_pitch_amp=max_pitch_amp,
                            vowel_duration=vowel_duration, pitch_contour=pitch_contour, blink_data=blink_data,
