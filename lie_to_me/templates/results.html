@@ -32,7 +32,7 @@
         </div>
 
         <div class="col s4">
-          <div class="card blue-grey darken-1">
+          <div class="card teal darken-2">
             <div class="card-content white-text">
               <span class="card-title">Lie Detection Results</span>
                 <p>Total Lies Detected: {{ lie_results.count(1) }}</p>
@@ -78,8 +78,8 @@ let lieChart = new Chart(lieCtx, {
         datasets: [{
             label: 'Truth/Lie TimeLine',
             data: lie_results_graph_data, //[{x: 3, y: 1}, {x: 5, y: 1}, {x: 6, y: 1}],
-            borderColor: 'rgba(100, 123, 211, 1)',
-            pointBackgroundColor: 'rgba(100, 123, 211, 1)',
+            borderColor: 'rgba(36, 78, 153, 1)',
+            pointBackgroundColor: 'rgba(36, 78, 153, 1)',
             pointRadius: 1,
             steppedLine: true
         }
