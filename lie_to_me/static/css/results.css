@@ -1,0 +1,9 @@
+body {
+    background: rgb(247, 247, 247);
+}
+
+#lieDiv {
+    margin: 20px 20px 0 20px;
+    color: #0d47a1;
+    font-family: 'Limelight', cursive;
+}

@@ -8,6 +8,7 @@
 {% block links %}
 <li id="upload"><a href="{{ url_for('upload') }}">UPLOAD</a></li>
 <li class="active" id="analysis"><a href="#">ANALYSIS</a></li>
+<li id="results"><a href="{{ url_for('results') }}">RESULTS</a></li>
 {% endblock %}
 
 {% block bodycontent %}
@@ -66,42 +67,43 @@ let pitch_contour = {{ pitch_contour|tojson }};
 
 // Convert JSON Data to ChartJS Scatter plot readable version
 // data = [{x: value, y: value}, ...]
-let micro_expression_graph_data = [];
-let seconds = 0;
+let micro_expression_graph_data = [{x: 0, y: 0}];
+let seconds = 2;
 for (let value of micro_expression) {
     micro_expression_graph_data.push({x: seconds/60.0, y: value});
+    seconds += 2;
 }
 
-let blink_graph_data = [];
-seconds = 0;
+let blink_graph_data = [{x: 0, y: 0}];
+seconds = 2;
 for (let value of blink_data) {
     blink_graph_data.push({x: seconds/60.0, y: value});
     seconds += 2;
 }
 
-let mean_energy_data = [];
-seconds = 0;
+let mean_energy_data = [{x: 0, y: 0}];
+seconds = 2;
 for (let value of mean_energy){
     mean_energy_data.push({x: seconds/60.0, y: value});
     seconds += 2;
 }
 
-let max_pitch_amp_data = [];
-seconds = 0;
+let max_pitch_amp_data = [{x: 0, y: 0}];
+seconds = 2;
 for (let value of max_pitch_amp){
     max_pitch_amp_data.push({x: seconds/60.0, y: value});
     seconds += 2;
 }
 
-let vowel_duration_data = [];
-seconds = 0;
+let vowel_duration_data = [{x: 0, y: 0}];
+seconds = 2;
 for (let value of vowel_duration){
     vowel_duration_data.push({x: seconds/60.0, y: value});
     seconds += 2;
 }
 
-let pitch_contour_data = [];
-seconds = 0;
+let pitch_contour_data = [{x: 0, y: 0}];
+seconds = 2;
 for (let value of pitch_contour){
     pitch_contour_data.push({x: seconds/60.0, y: value});
     seconds += 2;
@@ -150,7 +152,7 @@ let blinkChart = new Chart(blinkCtx, {
 });
 
 let mExpChart = new Chart(mExpCtx, {
-    type: 'scatter',
+    type: 'line',
     data: {
         datasets: [{
             label: 'Micro Expressions',
@@ -193,7 +195,7 @@ let mExpChart = new Chart(mExpCtx, {
 
 
 let energyChart = new Chart(energyCtx, {
-    type: 'scatter',
+    type: 'line',
     data: {
         datasets: [{
             label: 'Energy',
@@ -234,7 +236,7 @@ let energyChart = new Chart(energyCtx, {
 });
 
 let pitchChart = new Chart(pitchCtx, {
-    type: 'scatter',
+    type: 'line',
     data: {
         datasets: [{
             label: 'Max Pitch Amplitude',
@@ -276,7 +278,7 @@ let pitchChart = new Chart(pitchCtx, {
 });
 
 let vowelChart = new Chart(vowelCtx, {
-    type: 'scatter',
+    type: 'line',
     data: {
         datasets: [{
             label: 'Vowel Duration',
@@ -318,7 +320,7 @@ let vowelChart = new Chart(vowelCtx, {
 });
 
 let contourChart = new Chart(contourCtx, {
-    type: 'scatter',
+    type: 'line',
     data: {
         datasets: [
         {
