@@ -92,7 +92,7 @@ def process_video(filepath):
             encoded_string = base64.b64encode(image_file.read())
             base64_frames[index] = encoded_string.decode('utf-8')
 
-    cleanup_video()
+    cleanup_video_frames()
 
     video_fps_rate[0] = fps_rate
 
@@ -281,13 +281,16 @@ def microexpression_analyzer(emotions, fps):
     return time_array
 
 
-def cleanup_video():
+def cleanup_uploads():
+    """Clean up uploaded videos"""
+    for fl in glob.glob(os.path.join(basedir, 'static', 'data', 'uploads', "*")):
+        os.remove(fl)
+
+
+def cleanup_video_frames():
     """ Clean up temporary frames and uploaded file
     """
     for fl in glob.glob(os.path.join(basedir, 'static', 'data', 'tmp_video', '*')):
-        os.remove(fl)
-
-    for fl in glob.glob(os.path.join('uploads', '*')):
         os.remove(fl)
 
 

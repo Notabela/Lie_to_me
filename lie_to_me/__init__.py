@@ -20,7 +20,8 @@ video = UploadSet('videos', AllExcept(SCRIPTS + EXECUTABLES))
 
 app = Flask(__name__)
 
-app.config['UPLOADED_VIDEOS_DEST'] = 'uploads'
+# app.config['UPLOADED_VIDEOS_DEST'] = 'uploads'
+app.config['UPLOADED_VIDEOS_DEST'] = os.path.join(basedir, 'static', 'data', 'uploads')
 app.config['SECRET_KEY'] = "VgGbw86h5A37B0Q6EA4t"
 
 configure_uploads(app, video)

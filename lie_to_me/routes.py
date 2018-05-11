@@ -4,9 +4,11 @@ import csv
 import threading
 import shelve
 from pathlib import Path
-from flask import render_template, request, jsonify
+from flask import render_template, request, jsonify, url_for
 from lie_to_me import app, video, basedir
-from lie_to_me.process import process_video, process_audio
+from lie_to_me.process import process_video, process_audio, cleanup_uploads
+
+video_file_name = [None]  # Save video filename for later retrieval
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -15,13 +17,22 @@ def upload():
         Upload and Analyze Video
     :return: home.html template
     """
+    global video_file_name
+
     if request.method == 'POST' and 'file' in request.files:
+
+        # clear uploads folder
+        cleanup_uploads()
+
         # Video has been uploaded
         filename = video.save(request.files['file'])
+        video_file_name[0] = filename
 
         # Process video on a new thread
-        threading.Thread(target=process_video, args=[os.path.join('uploads', filename)]).start()
-        threading.Thread(target=process_audio, args=[os.path.join('uploads', filename)]).start()
+        # threading.Thread(target=process_video, args=[os.path.join('uploads', filename)]).start()
+        # threading.Thread(target=process_audio, args=[os.path.join('uploads', filename)]).start()
+        threading.Thread(target=process_video, args=[os.path.join(basedir, 'static', 'data', 'uploads', filename)]).start()
+        threading.Thread(target=process_audio, args=[os.path.join(basedir, 'static', 'data', 'uploads', filename)]).start()
 
         return jsonify({'success': True}), 200, {'ContentType': 'application/json'}
 
@@ -102,4 +113,24 @@ def results():
         View Final Lie Detection results of Uploaded Video
     :return:
     """
-    return render_template('results.html')
+    # Create Mock truth/lie data
+    from random import randrange
+    lie_results = [randrange(0, 2) for i in range(0, 50)]
+
+    # Find lie timestamps
+    # divmod to find minute, seconds -> results should be (min, sec, min, sec)
+    # the first min,sec is start time of interval and second is end time
+    lie_timestamps = []
+    for index, value in enumerate(lie_results):
+        if value:
+            # a lie occurred
+            start_m, start_s = divmod(index*2, 60)
+            end_m, end_s = divmod(index*2 + 2, 60)
+
+            lie_timestamps.append(
+                ('{:02d}:{:02d}'.format(start_m, start_s), '{:02d}:{:02d}'.format(end_m, end_s))
+            )
+
+    video_src = url_for('static', filename='data/uploads/{0}'.format(video_file_name[0]))
+    return render_template('results.html', lie_results=lie_results, lie_timestamps=lie_timestamps,
+                           video_src=video_src)
