@@ -1,3 +1,6 @@
+body {
+    font-family: 'Open sans', sans-serif;
+}
 #video_canvas {
     background-color: #E9E9E9;
     margin-top: 5px;
@@ -18,7 +21,7 @@
 
 .overlay_2 { 
     position:absolute; 
-    top:-44px;
+    top:-28px;
     left:16px;
 }
 
