@@ -248,7 +248,7 @@ def microexpression_analyzer(emotions, fps):
             microexpression_loop_counter += 1
         # If the micro expression changed back to the original expression it came from then
         # We have a possible lie and the timestamp is recorded.
-        if emotion_at_start == current_emotion and microexpression_loop_counter == 15:
+        if previous_emotion != current_emotion and microexpression_loop_counter == 15:
             seconds = i / fps
             minutes = seconds / 60
             if minutes < 1:
