@@ -48,10 +48,15 @@ def analysis():
     """
     json_path = os.path.join(basedir, 'static', 'data', 'tmp_json')
 
-    audio_file = Path(os.path.join(json_path, 'audio_data.shlf'))
-    video_file = Path(os.path.join(json_path, 'facial_data.shlf'))
+    if os.name == 'nt':
+        audio_file = Path(os.path.join(json_path, 'audio_data.shlf.dir'))
+        video_file = Path(os.path.join(json_path, 'facial_data.shlf.dir'))
+    else:
+        audio_file = Path(os.path.join(json_path, 'audio_data.shlf'))
+        video_file = Path(os.path.join(json_path, 'facial_data.shlf'))
+
     # csv_path = os.path.join(basedir, 'static', 'data', 'csv')
-    # txt_file = Path(os.path.join(basedir, 'static', 'data', 'first_soc.txt'))
+    # txt_file = os.path.join(basedir, 'static', 'data', 'first_soc.txt')
 
     # if not os.path.exists(csv_path):
     #     os.mkdir(csv_path)
@@ -89,16 +94,16 @@ def analysis():
     #     if line[0] == 'F':
     #         traindata[index1] = 1
     #         traindata[index2] = 1
-
-    # All output values should be available here:
-
-    # with open(Path(os.path.join(csv_path, 'train.csv')), 'w', newline='') as csvfile:
+    #
+    # with open(os.path.join(csv_path, 'train.csv'), 'w', newline='') as csvfile:
     #     writer = csv.writer(csvfile)
-    #     writer.writerow(['Time Interval', 'Emotion Data', 'Micro-expressions', 'Blinks',
+    #     writer.writerow(['Time Interval', 'Micro-expressions', 'Blinks',
     #                      'Mean Energy', 'Max Pitch Amplitude', 'Vowel Duration', 'Fundamental Frequency',
     #                      'False/True'])
-    #     for index in range(len(mean_energy)):
-    #         writer.writerow([index, emotion_data[index], microexpression_data[index], blink_data[index],
+    #
+    #     # for cases where one parameter has more elements than another
+    #     for index in range(min(len(mean_energy), len(blink_data), len(microexpression_data))):
+    #         writer.writerow([index, microexpression_data[index], blink_data[index],
     #                          mean_energy[index], max_pitch_amp[index], vowel_duration[index], pitch_contour[index],
     #                          traindata[index]])
 
