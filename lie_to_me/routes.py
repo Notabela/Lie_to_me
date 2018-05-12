@@ -86,7 +86,7 @@ def analysis():
     niko_file = os.path.join(basedir, 'static', 'data', 'train_files', 'first_niko.txt')
     vero_file = os.path.join(basedir, 'static', 'data', 'train_files', 'first_vero.txt')
 
-    txt_file = soc_file
+    txt_file = niko_file
 
     train_data = []
 
