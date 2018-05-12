@@ -47,14 +47,16 @@ def analysis():
     :return:
     """
     json_path = os.path.join(basedir, 'static', 'data', 'tmp_json')
-
-    audio_file = Path(os.path.join(json_path, 'audio_data.shlf'))
-    video_file = Path(os.path.join(json_path, 'facial_data.shlf'))
     # csv_path = os.path.join(basedir, 'static', 'data', 'csv')
-    # txt_file = Path(os.path.join(basedir, 'static', 'data', 'first_soc.txt'))
-
     # if not os.path.exists(csv_path):
-    #     os.mkdir(csv_path)
+    #    os.mkdir(csv_path)
+
+    if os.name == 'nt':
+        audio_file = Path(os.path.join(json_path, 'audio_data.shlf.dir'))
+        video_file = Path(os.path.join(json_path, 'facial_data.shlf.dir'))
+    else:
+        audio_file = Path(os.path.join(json_path, 'audio_data.shlf'))
+        video_file = Path(os.path.join(json_path, 'facial_data.shlf'))
 
     # Files exists
     if audio_file.is_file() and video_file.is_file():
@@ -78,29 +80,47 @@ def analysis():
         vowel_duration = None
         pitch_contour = None
 
-    #traindata = []
+    # Training Files (choose one)
+    # soc_file = os.path.join(basedir, 'static', 'data', 'train_files', 'first_soc.txt')
+    # niko_file = os.path.join(basedir, 'static', 'data', 'train_files', 'first_niko.txt')
+    # vero_file = os.path.join(basedir, 'static', 'data', 'train_files', 'first_vero.txt')
 
-    #for i in range(len(blink_data)):
-    #    traindata.append(0)
-    #trainfile = open(txt_file)
-    #for line in trainfile:
+    # txt_file = soc_file
+
+    # train_data = []
+
+    # for cases where one parameter has more elements
+    # for i in range(min(len(blink_data), len(microexpression_data), len(mean_energy))):
+    #    train_data.append(0)
+
+    # train_file = open(txt_file)
+
+    # for line in train_file:
     #    index1 = int((int(line[4]) * 600) + ((int(line[5]) * 60) + (int(line[7]) * 10) + int(line[8])) / 2)
     #    index2 = int((int(line[10]) * 600) + ((int(line[11]) * 60) + (int(line[13]) * 10) + int(line[14])) / 2)
     #    if line[0] == 'F':
-    #        traindata[index1] = 1
-    #        traindata[index2] = 1
+    #        train_data[index1] = 1
+    #        train_data[index2] = 1
 
-    # All output values should be available here:
+    # with open(os.path.join(csv_path, 'train.csv'), 'w', newline='') as csv_file:
+    #    writer = csv.writer(csv_file)
+    #    writer.writerow(['Time Interval', 'Micro-expressions', 'Blinks',
+    #                     'Mean Energy', 'Max Pitch Amplitude', 'Vowel Duration', 'Fundamental Frequency',
+    #                     'False/True'])
 
-    with open(Path(os.path.join(csv_path, 'train.csv')), 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(['Time Interval', 'Emotion Data', 'Micro-expressions', 'Blinks',
-                         'Mean Energy', 'Max Pitch Amplitude', 'Vowel Duration', 'Fundamental Frequency',
-                         'False/True'])
-        for index in range(len(mean_energy)):
-            writer.writerow([index, emotion_data[index], microexpression_data[index], blink_data[index],
-                             mean_energy[index], max_pitch_amp[index], vowel_duration[index], pitch_contour[index],
-                             traindata[index]])
+    #    # for cases where one parameter has more elements than another
+    #    for index in range(min(len(mean_energy), len(blink_data), len(microexpression_data))):
+    #        writer.writerow([index, microexpression_data[index], blink_data[index],
+    #                         mean_energy[index], max_pitch_amp[index], vowel_duration[index], pitch_contour[index],
+    #                         train_data[index]])
+
+    finalresults = [['Time Interval', 'Micro-expressions', 'Blinks',
+                     'Mean Energy', 'Max Pitch Amplitude', 'Vowel Duration', 'Fundamental Frequency' ]]
+
+    for index in range((min(len(mean_energy), len(blink_data), len(microexpression_data)))):
+        finalresults.append([index, microexpression_data[index], blink_data[index],
+                             mean_energy[index], max_pitch_amp[index], vowel_duration[index],
+                             pitch_contour[index]])
 
     return render_template('analysis.html', mean_energy=mean_energy, max_pitch_amp=max_pitch_amp,
                            vowel_duration=vowel_duration, pitch_contour=pitch_contour, blink_data=blink_data,

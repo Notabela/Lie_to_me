@@ -124,7 +124,7 @@ detector.addEventListener("onInitializeSuccess", () => {
 
   $(".overlay").html("");
   $(".file-field .btn").removeClass("disabled");
-  $(".results .btn-large").removeClass("disabled");
+  //$(".results .btn-large").removeClass("disabled");
   $(".file-path").prop('disabled', false);
   $(".file-path").change( () => {
 
@@ -141,6 +141,7 @@ detector.addEventListener("onInitializeSuccess", () => {
       video_player.appendChild(source);
       video_player.load();
       $("#video").css('visibility', "visible");
+      $(".results .btn-large").removeClass("disabled");
 
     }
   });

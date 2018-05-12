@@ -38,7 +38,7 @@ def convert_to_frames(filepath):
                              'default=noprint_wrappers=1', filepath]
         proc = subprocess.Popen(vid_dimension_cmd, stdout=subprocess.PIPE)
         dimension_output = proc.stdout.read().decode('utf-8')
-        regex = re.compile(r"[a-z]+=([0-9]+)\n[a-z]+=([0-9]+)\n")
+        regex = re.compile(r"[a-z]+=([0-9]+)\r*\n[a-z]+=([0-9]+)\r*\n")
         width, height = regex.match(dimension_output).groups()
 
         # FIND FPS RATE OF VIDEO
