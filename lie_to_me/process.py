@@ -248,7 +248,7 @@ def microexpression_analyzer(emotions, fps):
             microexpression_loop_counter += 1
         # If the micro expression changed back to the original expression it came from then
         # We have a possible lie and the timestamp is recorded.
-        if emotion_at_start == current_emotion and microexpression_loop_counter == 15:
+        if previous_emotion != current_emotion and microexpression_loop_counter == 15:
             seconds = i / fps
             minutes = seconds / 60
             if minutes < 1:
@@ -257,7 +257,6 @@ def microexpression_analyzer(emotions, fps):
             seconds_timestamps.append(seconds)
             microexpression_loop_counter = 0
             emotion_at_start = ''
-            flag = 0
             continue
         # Record current max and previous max for next the analysis of the next ones
         previous_max = current_max

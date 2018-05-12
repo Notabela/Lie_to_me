@@ -78,17 +78,17 @@ def analysis():
         vowel_duration = None
         pitch_contour = None
 
-    traindata = []
+    #traindata = []
 
-    for i in range(len(blink_data)):
-        traindata.append(0)
-    trainfile = open(txt_file)
-    for line in trainfile:
-        index1 = int((int(line[4]) * 600) + ((int(line[5]) * 60) + (int(line[7]) * 10) + int(line[8])) / 2)
-        index2 = int((int(line[10]) * 600) + ((int(line[11]) * 60) + (int(line[13]) * 10) + int(line[14])) / 2)
-        if line[0] == 'F':
-            traindata[index1] = 1
-            traindata[index2] = 1
+    #for i in range(len(blink_data)):
+    #    traindata.append(0)
+    #trainfile = open(txt_file)
+    #for line in trainfile:
+    #    index1 = int((int(line[4]) * 600) + ((int(line[5]) * 60) + (int(line[7]) * 10) + int(line[8])) / 2)
+    #    index2 = int((int(line[10]) * 600) + ((int(line[11]) * 60) + (int(line[13]) * 10) + int(line[14])) / 2)
+    #    if line[0] == 'F':
+    #        traindata[index1] = 1
+    #        traindata[index2] = 1
 
     # All output values should be available here:
 
