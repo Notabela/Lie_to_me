@@ -21,8 +21,8 @@ The following browsers are supported on desktop platforms:
 
 #### Supported Systems
 
-- Mac OS
-- Windows
+- Mac OS running Python 3.5+ (64bit)
+- Windows running Python 3.5+ (64bit)
 
 
 
