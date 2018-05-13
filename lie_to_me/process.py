@@ -7,6 +7,8 @@ import subprocess
 import math
 import shelve
 import re
+from sklearn import tree
+from sklearn.externals import joblib
 from flask_socketio import emit
 from lie_to_me import basedir, FFMPEG_PATH, FFPROBE_PATH, app, socketio
 from lie_to_me.modules import audio
@@ -257,7 +259,6 @@ def microexpression_analyzer(emotions, fps):
             seconds_timestamps.append(seconds)
             microexpression_loop_counter = 0
             emotion_at_start = ''
-            flag = 0
             continue
         # Record current max and previous max for next the analysis of the next ones
         previous_max = current_max
@@ -280,6 +281,43 @@ def microexpression_analyzer(emotions, fps):
 
     return time_array
 
+# Function to train support vector model. Only for use when training the model.
+def train_lie_model(pkl_file):
+    list_of_features = []
+    training_data = []
+    with open('niko_train.csv', 'rt') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            features = []
+            training_data.append(row['False/True'])
+            features.append(row['Micro-expressions'])
+            features.append(row['Blinks'])
+            features.append(row['Mean Energy'])
+            features.append(row['Max Pitch Amplitude'])
+            features.append(row['Vowel Duration'])
+            features.append(row['Fundamental Frequency'])
+            list_of_features.append(features)
+
+    if not os.path.exists(pkl_file):
+        dt = tree.DecisionTreeClassifier()
+        dt.fit(list_of_features, training_data)
+        print('Model Trained')
+        joblib.dump(dt, pkl_file)
+    else:
+        os.remove(pkl_file)
+        dt = tree.DecisionTreeClassifier()
+        dt.fit(list_of_features, training_data)
+        print('Model Trained')
+        joblib.dump(dt, pkl_file)
+
+# Take the model and predicts whether a lie occured
+# Arguments
+# vector: which is a list of lists of features to be predicted.
+# Example [[Micro-expr #1, blink-rate #1, audio-feature #1, ...] [Micro-expr #2, blink-rate #2, audio-feature #2, ...] [...] [...]]
+def predict(vector):
+    pkl_file = os.path.join(basedir, 'static', 'data', 'DT_ML_model(Microexpressions).pkl')
+    SVM = joblib.load(pkl_file)
+    return SVM.predict(vector)
 
 def cleanup_uploads():
     """Clean up uploaded videos"""
