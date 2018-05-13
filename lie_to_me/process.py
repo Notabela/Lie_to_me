@@ -313,11 +313,20 @@ def train_lie_model(pkl_file):
 # Take the model and predicts whether a lie occured
 # Arguments
 # vector: which is a list of lists of features to be predicted.
-# Example [[Micro-expr #1, blink-rate #1, audio-feature #1, ...] [Micro-expr #2, blink-rate #2, audio-feature #2, ...] [...] [...]]
+# Example [[Micro-expr #1, blink-rate #1, audio-feature #1, ...]
+# [Micro-expr #2, blink-rate #2, audio-feature #2, ...] [...] [...]]
+
+
 def predict(vector):
-    pkl_file = os.path.join(basedir, 'static', 'data', 'DT_ML_model(Microexpressions).pkl')
+    """ Machine Learning Lie Prediction Function"""
+    pkl_file = os.path.join(basedir, 'MLModels', 'DT_ML_model(Microexpressions).pkl')
+
+    if not os.path.exists(pkl_file):
+        exit()
+
     SVM = joblib.load(pkl_file)
     return SVM.predict(vector)
+
 
 def cleanup_uploads():
     """Clean up uploaded videos"""

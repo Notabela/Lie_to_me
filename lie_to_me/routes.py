@@ -6,9 +6,10 @@ import shelve
 from pathlib import Path
 from flask import render_template, request, jsonify, url_for
 from lie_to_me import app, video, basedir
-from lie_to_me.process import process_video, process_audio, cleanup_uploads
+from lie_to_me.process import process_video, process_audio, cleanup_uploads, predict
 
 video_file_name = [None]  # Save video filename for later retrieval
+prediction = [None]  # Save prediction results to display on results endpoint
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -46,6 +47,8 @@ def analysis():
         View Final Analysis of Uploaded Video
     :return:
     """
+    global prediction
+
     json_path = os.path.join(basedir, 'static', 'data', 'tmp_json')
     # csv_path = os.path.join(basedir, 'static', 'data', 'csv')
     # if not os.path.exists(csv_path):
@@ -114,14 +117,16 @@ def analysis():
     #                         mean_energy[index], max_pitch_amp[index], vowel_duration[index], pitch_contour[index],
     #                         train_data[index]])
 
-    #finalresults = [['Time Interval', 'Micro-expressions', 'Blinks',
+    # finalresults = [['Time Interval', 'Micro-expressions', 'Blinks',
     #                 'Mean Energy', 'Max Pitch Amplitude', 'Vowel Duration', 'Fundamental Frequency' ]]
-    finalresults = []
+    final_results = []
 
     for index in range((min(len(mean_energy), len(blink_data), len(microexpression_data)))):
-        finalresults.append([microexpression_data[index], blink_data[index],
+        final_results.append([microexpression_data[index], blink_data[index],
                              mean_energy[index], max_pitch_amp[index], vowel_duration[index],
                              pitch_contour[index]])
+
+    prediction[0] = predict(final_results)
 
     return render_template('analysis.html', mean_energy=mean_energy, max_pitch_amp=max_pitch_amp,
                            vowel_duration=vowel_duration, pitch_contour=pitch_contour, blink_data=blink_data,
@@ -136,7 +141,8 @@ def results():
     """
     # Create Mock truth/lie data
     from random import randrange
-    lie_results = [randrange(0, 2) for i in range(0, 50)]
+    # lie_results = [randrange(0, 2) for i in range(0, 50)]
+    lie_results = [ int(i) for i in prediction[0] ]
 
     # Find lie timestamps
     # divmod to find minute, seconds -> results should be (min, sec, min, sec)
