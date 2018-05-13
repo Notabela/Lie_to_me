@@ -114,11 +114,12 @@ def analysis():
     #                         mean_energy[index], max_pitch_amp[index], vowel_duration[index], pitch_contour[index],
     #                         train_data[index]])
 
-    finalresults = [['Time Interval', 'Micro-expressions', 'Blinks',
-                     'Mean Energy', 'Max Pitch Amplitude', 'Vowel Duration', 'Fundamental Frequency' ]]
+    #finalresults = [['Time Interval', 'Micro-expressions', 'Blinks',
+    #                 'Mean Energy', 'Max Pitch Amplitude', 'Vowel Duration', 'Fundamental Frequency' ]]
+    finalresults = []
 
     for index in range((min(len(mean_energy), len(blink_data), len(microexpression_data)))):
-        finalresults.append([index, microexpression_data[index], blink_data[index],
+        finalresults.append([microexpression_data[index], blink_data[index],
                              mean_energy[index], max_pitch_amp[index], vowel_duration[index],
                              pitch_contour[index]])
 
