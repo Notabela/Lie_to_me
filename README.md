@@ -1,6 +1,8 @@
 # Lie To Me
 
-Lie detection using facial and voice recognition
+Capstone Project: Lie detection using facial and voice recognition
+
+**For an overview, our meetings, research papers, reports, check out our main repo here:** https://github.com/Notabela/Capstone-Fall-2017
 
 ## Requirements & Dependencies
 #### Hardware requirements (recommended)
